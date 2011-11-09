@@ -77,7 +77,6 @@ Admin put application in maintenance mode (deny end user login)
 
 =head2 Website demo
 
-I'll worry about this later.
 
   maybe
 

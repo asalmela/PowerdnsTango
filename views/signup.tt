@@ -1,3 +1,4 @@
+<script>$(function(){$('input:submit, button, .button_format').button();$('img').tipTip({delay:'800'});$("#signup_form").validate({rules:{login:'required',name:'required',password1:'required',password2:'required',email:{required:true,email:true},},})});</script>
 <span class="page_title">Sign up</span>
 <div class="line_break"></div>
 <div class="content_break"></div>
@@ -29,22 +30,3 @@
                         </ul>
 </form>
 <div id="logo_small"><img src="/images/logo_small.png" alt="logo" title="meow" /></div>
-<script>
-        $(function() {
-                $('input:submit, button, .button_format').button();
-		$('img').tipTip({ delay: '800' });
-
-                $("#signup_form").validate({ 
-                rules: { 
-		  login: 'required',
-		  name: 'required',
-		  password1: 'required',
-		  password2: 'required',
-                  email: { 
-                  required: true, 
-                  email: true 
-                },
-                }, 
-              });
-        });
-</script>
