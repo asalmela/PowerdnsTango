@@ -78,14 +78,27 @@ Admin put application in maintenance mode (deny end user login)
 =head2 Website demo
 
 
-  maybe
+  The demo is not attached to anything live and the database is reset every twelve hours.
+  So feel free to test out any and all features.
+  However I'd ask that you would please be polite and consider others.
+
+
+  http://pdns.averna.id.au/
+
+  ADMIN USER
+  Login: admin
+  Password: admin
+
+  END USER
+  Login: user
+  Password: user
 
 
 
 =head2 Install
 
 
-  SEE: INSTALL.README
+  SEE: INSTALL.README 
 
 
 
