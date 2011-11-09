@@ -1,0 +1,1 @@
+<div class='success'><img src='/images/icons/accept.png' alt="success" title="success" /><span>[% message %]</span></div>

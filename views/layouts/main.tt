@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+    <meta charset="UTF-8" />
+        <title>Powerdns Tango</title>
+	<meta name="description" content="Powerdns Tango is a web frontend for powerdns written in the perl dancer framework. Designed to make DNS management simple, easy and as quick as possible." />
+	<meta name="keywords" content="powerdns, powerdns frontend, pdns frontend, dns, webapp, frontend, front-end, perl, sysadmin, system administration, system administrations, administration, domain, nameserver, spf, txt, cname, dns records" />
+	<meta name="author" content="Sarah Fuller - sarah@averna.id.au" />
+	<meta name="robots" content="index,follow" />
+        <link type="text/css" href="[% request.uri_base %]/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+        <link type="text/css" href="[% request.uri_base %]/css/main.css" rel="stylesheet" />
+	<!--[if lte IE 7]>
+		<style>
+			#nav_menu_bg { margin-left: -324px; margin-top: 60px; }
+			#nav_menu li a { color: #ffffff; }
+			#mini_menu_bg { margin-top: -85px; }
+			#login_form { display: none; }
+			#logo_small { display: none; }
+			#signup_link { display: none; }
+		</style>
+	<![endif]-->
+        <script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.validate.js"></script>
+	<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.tipTip.minified.js"></script>
+ </head>
+   <body>
+     <!-- header -->
+                <div id="header" class="ui-corner-tl ui-corner-tr">Powerdns <span>Tango</span>
+		[% IF session.logged_in %]
+                        <div id="menu">
+				<form method="post" action="[% request.uri_base %]/domains">
+				<ul>
+				   <li class="ui-corner-bl ui-corner-br"><span>Domain&nbsp;<input type="text" name="domain_search" maxlength="256" class="ui-corner-all"/>&nbsp;<input type="submit" value="Search" /></span></li>
+                                </ul>
+				</form>
+                        </div>
+		[% END %]
+			<div id="nav_menu_bg">
+        			<ul id="nav_menu">
+		[% IF session.logged_in %]
+        			   <li id="nav_menu_home" class="nav_menu_active_default ui-corner-tl ui-corner-tr"><a href="/">Home</a></li>
+				   <li id="nav_menu_domains" class="nav_menu_active_default ui-corner-tl ui-corner-tr"><a href="/domains">Domains</a></li>
+				   <li id="nav_menu_templates" class="nav_menu_active_default ui-corner-tl ui-corner-tr"><a href="/templates">Templates</a></li>
+				   <li id="nav_menu_account" class="nav_menu_active_default ui-corner-tl ui-corner-tr"><a href="/account">Account</a></li>
+		[% IF session.user_type == 'admin' %]
+				   <li id="nav_menu_supermasters" class="nav_menu_active_default ui-corner-tl ui-corner-tr"><a href="/supermasters">Supermasters</a></li>
+                                   <li id="nav_menu_admin" class="nav_menu_active_default ui-corner-tl ui-corner-tr"><a href="/admin">Admin</a></li>
+		[% END %]
+                                   <li id="nav_menu_logout" class="nav_menu_active_default ui-corner-tl ui-corner-tr"><a href="/logout">Logout</a></li>
+		[% END %]
+        			</ul>
+			</div>
+                </div>
+     <!-- end header -->
+     <!-- content -->
+	<div id="wrapper" class="ui-corner-bl ui-corner-br">
+	  <div id="content">
+	   [% IF flash.message %]
+	   <div id="status_msg" class="flash_message flash ui-state-highlight ui-corner-all"><img src="/images/icons/accept.png" alt="Success" title="Success" /><span id="status_msg_txt">[% flash.message %]</span></div>
+	   [% END %]
+	   [% IF flash.error %]
+	   <div id="error_msg" class="flash_error flash ui-state-highlight ui-corner-all"><img src="/images/icons/exclamation.png" alt="Warning" title="Warning" /><span id="error_msg_txt">[% flash.error %]</span></div>
+	   [% END %]
+	   <div id="status_msg_ajax" class="flash_message flash ui-state-highlight ui-corner-all"><img src="/images/icons/accept.png" alt="Success" title="Success" /><span id="status_msg_txt_ajax"></span></div>
+	   <div id="error_msg_ajax" class="flash_error flash ui-state-highlight ui-corner-all"><img src="/images/icons/exclamation.png" alt="Warning" title="Warning" /><span id="error_msg_txt_ajax"></span></div>
+	   [% content %]
+	  </div>
+	</div>
+     <!-- end content -->
+     <!-- footer -->
+      <div id="footer">
+	<span><a href="https://github.com/averna-syd/PowerdnsTango">Powerdns Tango</a></span><span>&copy; 2011 <a href="mailto:sarah@averna.id.au">Sarah Fuller</a></span><br>
+	<span>Released under the <a href="http://www.gnu.org/licenses/gpl-3.0-standalone.html">GPLv3 license</a></span><br>
+      	<span>Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]</span>
+      </div>
+    <!-- end Footer -->
+   </body>
+</html>

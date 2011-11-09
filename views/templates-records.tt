@@ -1,0 +1,970 @@
+<div id="mini_menu_bg">
+        <ul id="mini_menu">
+	<li><a id="display_soa_button" href="#">SOA template record</a></li>
+	<li><a id="display_find_button" class="display_find_button" href="#">Find &amp; replace</a></li>
+	<li><a class="display_add_button" href="#">Add template record</a></li>
+        </ul>
+</div>
+<div id="display_soa_block" class="display_hidden">
+        <span class="page_title">SOA template record</span>
+        <a href="#"><img id="edit_soa_button" edit="[% template_id %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
+	<a href="#"><img id="save_soa_button" class="display_hidden" save="[% soa_id %]" template_id="[% template_id %]" domain="[% template_name %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
+	<a href="#"><img id="cancel_soa_button" class="display_hidden" cancel="[% template_id %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
+        <a href="#" class="sub_menu"><img id="display_soa_hide" class="sub_menu" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+        <a href="#" class="sub_menu"><img id="display_soa_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_soa">
+		<table class="table_formatter">
+			<tr>
+				<td>
+					<div class="table_formatter table_formatter_label ui-corner-all table_formatter_color1">
+						<span>Primary name server</span>
+					</div>
+				</td>
+                        	<td>
+					<div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color1">
+						<span id="soa_name_server">[% name_server %]</span>
+						<input id="edit_soa_name_server" class="display_hidden ui-corner-all" type="text" maxlength="90" value="[% name_server %]" />
+					</div>
+				</td>
+			</tr>
+			<tr>
+                        	<td>
+					<div class="table_formatter table_formatter_label ui-corner-all table_formatter_color2">
+						<span>Contact</span>
+					</div>
+				</td>
+                        	<td>
+					<div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color2">
+						<span id="soa_contact">[% contact %]</span>
+						<input id="edit_soa_contact" class="display_hidden ui-corner-all" type="text" maxlength="90" value="[% contact %]" />
+					</div>
+				</td>
+			</tr>
+                        <tr>
+				<td>
+					<div class="table_formatter table_formatter_label ui-corner-all table_formatter_color1">
+						<span>Refresh</span>
+					</div>
+				</td>
+				<td>
+					<div class="table_formatter_soa table_formatter ui-corner-all table_formatter_color1">
+						<span id="soa_refresh">[% refresh %]</span>
+						<input id="edit_soa_refresh" class="display_hidden ui-corner-all" type="text" maxlength="20" value="[% refresh %]" />
+					</div>
+				</td>
+			</tr>
+                        <tr>
+				<td>
+					<div class="table_formatter table_formatter_label ui-corner-all table_formatter_color2">
+						<span>Retry</span>
+					</div>
+				</td>
+                        	<td>
+					<div class="table_formatter_soa table_formatter ui-corner-all table_formatter_color2">
+						<span id="soa_retry">[% retry %]</span>
+						<input id="edit_soa_retry" class="display_hidden ui-corner-all" type="text" maxlength="20" value="[% retry %]" />
+					</div>
+				</td>
+			</tr>
+                        <tr>
+				<td>
+					<div class="table_formatter table_formatter_label ui-corner-all table_formatter_color1">
+						<span>Expire</span>
+					</div>
+				</td>
+                        	<td>
+					<div class="table_formatter_soa table_formatter ui-corner-all table_formatter_color1">
+						<span id="soa_expire">[% expire %]</span>
+						<input id="edit_soa_expire" class="display_hidden ui-corner-all" type="text" maxlength="20" value="[% expire %]" />
+					</div>
+				</td>
+			</tr>
+                        <tr>
+				<td>
+					<div class="table_formatter table_formatter_label ui-corner-all table_formatter_color2">
+						<span>Minimum</span>
+					</div>
+				</td>
+                        	<td>
+					<div class="table_formatter_soa table_formatter ui-corner-all table_formatter_color2">
+						<span id="soa_minimum">[% minimum %]</span>
+						<input id="edit_soa_minimum" class="display_hidden ui-corner-all" type="text" maxlength="20" value="[% minimum %]" />
+					</div>
+				</td>
+			</tr>
+		</table>
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="display_find_block" class="display_hidden">
+        <span class="page_title">Find &amp; replace</span><span class="help_info"></span>
+        <a href="#" class="sub_menu"><img id="display_find_hide" class="sub_menu display_find_button" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+        <a href="#" class="sub_menu"><img id="display_find_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_find">
+                <form id="find_form" method="post" action="[% request.uri_base %]/templates/edit/records/id/[% template_id %]/find/replace">
+                        <ul class="form ui-corner-all">
+                                <li>
+                                        <label>Find</label>
+                                        <input id="find_search" class="ui-corner-all" name="find_search" type="text" maxlength="255" value="" />
+                                </li>
+                                <li>
+                                        <label>In</label>
+                                        <select id="find_in" title="Find in" name="find_in">
+                                                <option value="ttl">TTL</option>
+                                                <option value="prio">Priority</option>
+                                                <option value="content">Content</option>
+                                         </select>
+                                </li>
+                                <li>
+                                        <label>Replace with</label>
+                                        <input id="find_replace" class="ui-corner-all" name="find_replace" type="text" maxlength="255" value="" />
+                                </li>
+                                <li>
+                                        <input id="confirm_find" type="submit" value="Save" /><button class="display_find_button">Cancel</button>
+                                </li>
+                        </ul>
+                </form>
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="display_add_block" class="display_hidden">
+        <span class="page_title">Add template record</span>
+        <a href="#" class="sub_menu"><img id="display_add_hide" class="sub_menu display_add_hide" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+        <a href="#" class="sub_menu"><img id="display_add_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Close" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_add">
+                <form id="add_record_form" method="post" action="[% request.uri_base %]/templates/edit/records/id/[% template_id %]/add">
+                        <ul class="form ui-corner-all">
+                                <li id="add_host">
+                                        <label>Name</label>
+                                        <input id="add_record_host" name="add_record_host" type="text" value=""  maxlength="255" class="ui-corner-all" /><span class="info">.%zone%</span>
+                                </li>
+                                <li id="add_type">
+                                        <label>Type</label>
+                                                <select id="add_record_type" title="Type" name="add_record_type">
+                                                        <option value="A" selected="selected">A</option>
+                                                        <option value="AAAA">AAAA</option>
+                                                        <option value="CNAME">CNAME</option>
+                                                        <option value="LOC">LOC</option>
+                                                        <option value="MX">MX</option>
+                                                        <option value="NS">NS</option>
+                                                        <option value="PTR">PTR</option>
+                                                        <option value="SPF">SPF</option>
+                                                        <option value="SRV">SRV</option>
+                                                        <option value="TXT">TXT</option>
+                                                </select>
+                                </li>
+                                <li id="add_prio" class="display_hidden">
+                                        <label>Priority</label>
+                                        <input id="add_record_prio" name="add_record_prio" class="ui-corner-all" type="text" maxlength="255" value="" />
+                                </li>
+				<li id="add_ttl">
+                                        <label>TTL</label>
+                                        <input id="add_record_ttl" name="add_record_ttl" class="ui-corner-all" type="text" maxlength="255" value="" />
+				</li>
+                                <li id="add_content">
+                                        <label>Content</label>
+                                        <input id="add_record_content" name="add_record_content" class="ui-corner-all" type="text" maxlength="255" value="" /><span id="help_info">Use %zone% where you would normally enter a domain name</span>
+                                </li>
+                                <li>
+                                        <input type="submit" value="Save" /><button class="display_add_hide">Cancel</button>
+                                </li>
+                        </ul>
+                </form>
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="display_records_block">
+        <table id="block_table">
+                <tr>
+                        <td id="block_title">
+				<div>
+                                	<span class="page_title">Records for template [% template_name %]</span>
+					<a href="#"><img edit="[% template_id %]" src="/images/icons/database_add.png" class="display_add_button center" alt="Add template record" title="Add template record" /></a>
+				</div>
+                        </td>
+                        <td id="block_search">
+                                <form method="post" action="[% request.uri_base %]/templates/edit/records/id/[% template_id %]">
+                                        <input type="text" name="record_search" maxlength="255" class="ui-corner-all"/>&nbsp;<input type="submit" value="Search" />
+                                </form>
+                        </td>
+                        <td id="block_util">
+				<a href="#" class="sub_menu"><img id="display_records_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+                        </td>
+                </tr>
+        </table>
+        <div class="line_break"></div>
+        <div id="display_records">
+                [% colour = 'table_formatter_color2' %]
+                <table class="table_formatter">
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_records ui-corner-all">
+                                                <span>Name</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_ttl ui-corner-all">
+                                                <span>TTL</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_rtype ui-corner-all">
+                                                <span>Type</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_prio ui-corner-all">
+                                                <span>Priority</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_prio ui-corner-all">
+                                                <span>Content</span>
+                                        </div>
+                                </td>
+                        </tr>
+
+                [% FOREACH id IN records.keys.sort %]
+                [% IF colour == 'table_formatter_color1' %]
+                        [% colour = 'table_formatter_color2' %]
+                [% ELSE %]
+
+                        [% colour = 'table_formatter_color1' %]
+                [% END %]
+                        <tr>
+                                <td>
+					[% nice_name = records.$id.name.replace('.%zone%', '') %]
+                                        [%  nice_name = nice_name.replace('%zone%', '') %]
+                                        <div class="table_formatter table_formatter_name ui-corner-all [% colour %]">
+                                                <span id="name_[% records.$id.id %]">[% nice_name %]</span>
+                                                <input id="edit_name_[% records.$id.id %]" name="edit_name" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% records.$id.name %]" />
+                                        </div>
+                                </td>
+				<td>
+                                        <div class="table_formatter table_formatter_ttl ui-corner-all [% colour %]">
+                                                <span id="ttl_[% records.$id.id %]">[% records.$id.ttl %]</span>
+                                                <input id="edit_ttl_[% records.$id.id %]" name="edit_ttl" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% records.$id.ttl %]" />
+                                        </div>
+                                <td>
+                                        <div class="table_formatter table_formatter_rtype ui-corner-all [% colour %]">
+                                                <span id="type_[% records.$id.id %]">[% records.$id.type %]</span>
+						<select id="edit_type_[% records.$id.id %]" select="[% records.$id.id %]" class="edit_type display_hidden"  title="Type" name="edit_type">
+                                        		<option value="A" selected="selected">A</option>
+                                        		<option value="AAAA">AAAA</option>
+                                        		<option value="CNAME">CNAME</option>
+                                        		<option value="LOC">LOC</option>
+                                        		<option value="MX">MX</option>
+                                        		<option value="NS">NS</option>
+                                        		<option value="PTR">PTR</option>
+                                        		<option value="SPF">SPF</option>
+                                        		<option value="SRV">SRV</option>
+                                        		<option value="TXT">TXT</option>
+                                		</select>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_prio ui-corner-all [% colour %]">
+                                                <span id="prio_[% records.$id.id %]">[% records.$id.prio %]</span>
+                                                <input id="edit_prio_[% records.$id.id %]" name="edit_prio" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% records.$id.prio %]" />
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_content ui-corner-all [% colour %]">
+                                                <span id="content_[% records.$id.id %]">[% records.$id.content %]</span>
+                                                <input id="edit_content_[% records.$id.id %]" name="edit_content" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% records.$id.content %]" />
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_links ui-corner-all [% colour %]">
+                                                <a href="#"><img id="edit_record_[% records.$id.id %]" class="edit_record_button" edit="[% records.$id.id %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
+                                                <a href="/templates/edit/records/id/[% template_id %]/delete/recordid/[% records.$id.id %]" class="confirm_link"><img id="delete_record_[% records.$id.id %]" delete="[% records.$id.id %]" src="/images/icons/database_delete.png" class="center" alt="Delete" title="Delete" /></a>
+                                                <a href="#"><img id="save_record_[% records.$id.id %]" class="save_record_button display_hidden" save="[% records.$id.id %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
+                                                <a href="#"><img id="cancel_record_[% records.$id.id %]" class="cancel_record_button display_hidden" cancel="[% records.$id.id %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
+                                        </div>
+                                </td>
+                        </tr>
+                [% END %]
+                </table>
+        [% IF lastpage > 1 %]
+                <div id="page_sort">
+                        <div class="content_break"></div>
+                        <a href="/templates/edit/records/id/[% id %]?p=1&r=[% results %]">&#xab; First</a>
+                        <a href="/templates/edit/records/id/[% id %]?p=[% previouspage %]&r=[% results %]">&#x8B; Back</a>
+                        <span>page [% page %] of [% lastpage %]</span>
+                        <a href="/templates/edit/records/id/[% id %]?p=[% nextpage %]&r=[% results %]">Next &#x9b;</a>
+                        <a href="/templates/edit/records/id/[% id %]?p=[% lastpage %]&r=[% results %]">Last &#xbb;</a>
+                        <div id="results_per_page">
+                                <span>Results per page</span>
+                                <a href="/templates/edit/records/id/[% id %]?p=[% page %]&r=25">25</a>
+                                <a href="/templates/edit/records/id/[% id %]?p=[% page %]&r=50">50</a>
+                                <a href="/templates/edit/records/id/[% id %]?p=[% page %]&r=100">100</a>
+                        </div>
+                </div>
+        [% END %]
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="confirm_action" title="Confirmation" class="display_hidden">
+  This action will permanently delete this record.<br><br>Are you sure?
+</div>
+<script>
+        $(function() {
+                $('input:submit, button').button();
+                $('#nav_menu_templates').addClass('nav_menu_active');
+		$('img').tipTip({ delay: '800' });
+
+                $('#add_record_form').validate({ 
+                	rules: { 
+                  		add_record_ttl: 'required',
+				add_record_content: 'required',
+                	}, 
+              	});
+
+                $('#find_form').validate({ 
+                        rules: { 
+                                find_search: 'required', 
+                                find_replace: 'required',
+                        }, 
+                });
+
+                $('.display_find_button').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_find_block').fadeToggle();   
+                });
+
+                $('#display_find_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_find').fadeToggle();   
+                });
+
+                $('#display_soa_button').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_soa_block').fadeToggle();   
+                });
+
+                $('#display_soa_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_soa').fadeToggle();   
+                });
+
+                $('#display_soa_hide').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_soa_block').fadeOut();
+                });
+
+                $('.display_add_button').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_block').fadeToggle();   
+                });
+
+
+                $('.display_add_hide').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_block').fadeOut();
+                });
+
+                $('#display_add_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add').fadeToggle();       
+                });
+
+                $('#display_records_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_records').fadeToggle();   
+                });
+
+                $("#confirm_action").dialog({
+                        autoOpen: false,
+                        modal: true
+                });
+
+                $(".confirm_link").click(function(e) {
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        var targetUrl = $(this).attr("href");
+
+                $("#confirm_action").dialog({
+                        buttons : {
+                                "Confirm" : function() {
+                                        window.location.href = targetUrl;
+                                },
+                                "Cancel" : function() {
+                                        $(this).dialog("close");
+                                }
+                        }
+                });
+
+                        $("#confirm_action").dialog("open");
+                });
+
+		$('#add_record_type').change(function() {
+			var type = $('#add_record_type').val();
+
+			if ( type == 'MX' || type == 'SRV' )
+			{
+				$('#add_prio').fadeIn();
+			}
+			else
+			{
+				$('#add_prio').hide();
+			}
+		});
+
+		$('.edit_type').change(function() {
+			var id = $(this).attr('select');
+			var tmptype = $('#edit_type_' + id).val();
+
+                                var record = {
+                                                id: $(this).attr('select'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/edit/records/get/record',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var name = json.name;
+                                                var type = json.type;
+                                                var ttl = json.ttl;
+                                                var prio = json.prio;
+                                                var content = json.content;
+
+                        			if ( tmptype == 'MX' || tmptype == 'SRV' )
+                        			{
+							$('#prio_' + id).hide();
+                                			$('input[id=edit_prio_' + id + ']').val(prio);
+                                			$('#edit_prio_' + id).fadeIn();
+						}
+						else
+						{
+							$('#edit_prio_' + id).hide();
+							$('input[id=edit_prio_' + id + ']').val(prio);
+							$('#prio_' + id).fadeIn();	
+						}
+					}
+				});
+		});
+
+		$('#edit_soa_button').click(function(e){
+                                e.preventDefault();
+				$('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('edit'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/edit/records/get/soa',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+						var stat = json.stat;
+						var name_server = json.name_server;
+						var contact = json.contact;
+						var refresh = json.refresh;
+						var retry = json.retry;
+						var expire = json.expire;
+						var minimum = json.minimum;
+
+						if ( stat == 'ok' )
+						{
+                                                	$('#soa_name_server').hide();
+                                                	$('#soa_contact').hide();
+                                                	$('#soa_refresh').hide();
+                                                	$('#soa_retry').hide();
+                                                	$('#soa_expire').hide();
+                                                	$('#soa_minimum').hide();
+                                                	$('input[id=edit_soa_name_server]').val(name_server);
+							$('input[id=edit_soa_soa_contact]').val(contact);
+							$('input[id=edit_soa_soa_refresh]').val(refresh);
+							$('input[id=edit_soa_soa_retry]').val(retry);
+							$('input[id=edit_soa_soa_expire]').val(expire);
+							$('input[id=edit_soa_soa_minimum]').val(minimum);
+                                                	$('#edit_soa_name_server').fadeIn();
+							$('#edit_soa_contact').fadeIn();
+							$('#edit_soa_refresh').fadeIn();
+							$('#edit_soa_retry').fadeIn();
+							$('#edit_soa_expire').fadeIn();
+							$('#edit_soa_minimum').fadeIn();
+							$('#edit_soa_button').hide();
+							$('#save_soa_button').fadeIn();
+							$('#cancel_soa_button').fadeIn();
+						}
+						else
+						{
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+						}
+                                        }
+                                });
+                        });
+
+                $('#cancel_soa_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('cancel'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/edit/records/get/soa',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var stat = json.stat;
+                                                var name_server = json.name_server;
+                                                var contact = json.contact;
+                                                var refresh = json.refresh;
+                                                var retry = json.retry;
+                                                var expire = json.expire;
+                                                var minimum = json.minimum;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_soa_name_server').hide();
+                                                        $('#edit_soa_contact').hide();
+                                                        $('#edit_soa_refresh').hide();
+                                                        $('#edit_soa_retry').hide();
+                                                        $('#edit_soa_expire').hide();
+                                                        $('#edit_soa_minimum').hide();
+
+                                                        $('#soa_name_server').text(name_server);
+                                                        $('#soa_contact').text(contact);
+                                                        $('#soa_refresh').text(refresh);
+                                                        $('#soa_retry').text(retry);
+                                                        $('#soa_expire').text(expire);
+                                                        $('#soa_minimum').text(minimum);
+
+                                                        $('#soa_name_server').fadeIn();
+                                                        $('#soa_contact').fadeIn();
+                                                        $('#soa_refresh').fadeIn();
+                                                        $('#soa_retry').fadeIn();
+                                                        $('#soa_expire').fadeIn();
+                                                        $('#soa_minimum').fadeIn();
+							$('#save_soa_button').hide();
+							$('#cancel_soa_button').hide();
+							$('#edit_soa_button').fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt').text(message);
+                                                        $('#error_msg').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+
+                $('#save_soa_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('save'),
+						template_id: $(this).attr('template_id'),
+						domain: $(this).attr('domain'),
+						name_server: $('#edit_soa_name_server').val(),
+						contact: $('#edit_soa_contact').val(),
+						refresh: $('#edit_soa_refresh').val(),
+						retry: $('#edit_soa_retry').val(),
+						expire: $('#edit_soa_expire').val(),
+						minimum: $('#edit_soa_minimum').val(),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/edit/records/update/soa',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var stat = json.stat;
+						var message = json.message;
+                                                var name_server = json.name_server;
+                                                var contact = json.contact;
+                                                var refresh = json.refresh;
+                                                var retry = json.retry;
+                                                var expire = json.expire;
+                                                var minimum = json.minimum;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_soa_name_server').hide();
+                                                        $('#edit_soa_contact').hide();
+                                                        $('#edit_soa_refresh').hide();
+                                                        $('#edit_soa_retry').hide();
+                                                        $('#edit_soa_expire').hide();
+                                                        $('#edit_soa_minimum').hide();
+
+                                                        $('#soa_name_server').text(name_server);
+                                                        $('#soa_contact').text(contact);
+                                                        $('#soa_refresh').text(refresh);
+                                                        $('#soa_retry').text(retry);
+                                                        $('#soa_expire').text(expire);
+                                                        $('#soa_minimum').text(minimum);
+							$('#status_msg_txt').text(message);
+
+                                                        $('#soa_name_server').fadeIn();
+                                                        $('#soa_contact').fadeIn();
+                                                        $('#soa_refresh').fadeIn();
+                                                        $('#soa_retry').fadeIn();
+                                                        $('#soa_expire').fadeIn();
+                                                        $('#soa_minimum').fadeIn();
+                                                        $('#save_soa_button').hide();
+                                                        $('#cancel_soa_button').hide();
+                                                        $('#edit_soa_button').fadeIn();
+                                                        $('#status_msg_txt_ajax').text(message);
+                                                        $('#status_msg_ajax').fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+
+
+                        $('.edit_record_button').click(function(e){
+                                e.preventDefault();
+				$('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('edit'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/edit/records/get/record',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+						var id = json.id;
+						var stat = json.stat;
+						var name = json.name;
+						var type = json.type;
+						var ttl = json.ttl;
+						var prio = json.prio;
+						var content = json.content;
+
+						if ( stat == 'ok' )
+						{
+							$('#name_' + id).hide();
+							$('#type_' + id).hide();
+							$('#ttl_' + id).hide();
+							$('#content_' + id).hide();
+							$('#edit_record_' + id).hide();
+							$('#delete_record_' + id).hide();
+
+							if ( type == 'MX' || type == 'SRV' )
+							{
+								$('#prio_' + id).hide();
+								$('input[id=edit_prio_' + id + ']').val(prio);
+								$('#edit_prio_' + id).fadeIn();
+							}
+
+							$('input[id=edit_name_' + id + ']').val(name);
+							$('select[id=edit_type_' + id + ']').val(type);
+							$('input[id=edit_ttl_' + id + ']').val(ttl);
+							$('input[id=edit_content_' + id + ']').val(content);
+ 
+							$('#edit_name_' + id).fadeIn();
+							$('#edit_type_' + id).fadeIn();
+							$('#edit_ttl_' + id).fadeIn();	
+							$('#edit_content_' + id).fadeIn();
+
+							$('#save_record_' + id).fadeIn();
+							$('#cancel_record_' + id).fadeIn();
+						}
+						else
+						{
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+						}
+                                        }
+                                });
+                        });
+
+
+                        $('.cancel_record_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+				var id = $(this).attr('cancel');
+				var tmptype = $('#edit_type_' + id).val();
+
+                                var record = {
+                                                id: id,
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/edit/records/get/record',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var name = json.name;
+                                                var type = json.type;
+                                                var ttl = json.ttl;
+                                                var prio = json.prio;
+                                                var content = json.content;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_name_' + id).hide();
+                                                        $('#edit_type_' + id).hide();
+                                                        $('#edit_ttl_' + id).hide();  
+                                                        $('#edit_content_' + id).hide();
+
+                                                        $('#save_record_' + id).hide();
+                                                        $('#cancel_record_' + id).hide();
+							
+							if ( type == 'MX' || type == 'SRV' || tmptype == 'MX' || tmptype == 'SRV' )
+							{
+								$('#edit_prio_' + id).hide();
+								$('#prio_' + id).text(prio);
+								$('#prio_' + id).fadeIn();
+							}
+
+                                                        $('#name_' + id).text(name);
+                                                        $('#type_' + id).text(type);
+                                                        $('#ttl_' + id).text(ttl);
+                                                        $('#content_' + id).text(content);
+
+                                                        $('#name_' + id).fadeIn();
+                                                        $('#type_' + id).fadeIn();
+                                                        $('#ttl_' + id).fadeIn();
+                                                        $('#content_' + id).fadeIn();
+                                                        $('#edit_record_' + id).fadeIn();
+                                                        $('#delete_record_' + id).fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+
+
+                        $('.save_record_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+				var id = $(this).attr('save');
+
+                                var record = {
+                                                id: $(this).attr('save'),
+						name: $('#edit_name_' + id).val(),
+						type: $('#edit_type_' + id).val(),
+						ttl: $('#edit_ttl_' + id).val(),
+						prio: $('#edit_prio_' + id).val(),
+						content: $('#edit_content_' + id).val(),
+						
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/edit/records/update/record',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+						var message = json.message;
+                                                var name = json.name;
+                                                var type = json.type;
+                                                var ttl = json.ttl;
+                                                var prio = json.prio;
+                                                var content = json.content;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_name_' + id).hide();
+                                                        $('#edit_type_' + id).hide();
+                                                        $('#edit_ttl_' + id).hide();  
+                                                        $('#edit_content_' + id).hide();
+
+                                                        $('#save_record_' + id).hide();
+                                                        $('#cancel_record_' + id).hide();
+
+							if ( type == 'MX' || type == 'SRV' )
+							{
+								$('#edit_prio_' + id).hide();
+								$('#prio_' + id).text(prio);
+								$('#prio_' + id).fadeIn();
+							}
+
+                                                        $('#name_' + id).text(name);
+                                                        $('#type_' + id).text(type);
+                                                        $('#ttl_' + id).text(ttl);
+                                                        $('#content_' + id).text(content);
+
+                                                        $('#name_' + id).fadeIn();
+                                                        $('#type_' + id).fadeIn();
+                                                        $('#ttl_' + id).fadeIn();
+                                                        $('#content_' + id).fadeIn();
+                                                        $('#edit_record_' + id).fadeIn();
+                                                        $('#delete_record_' + id).fadeIn();
+							$('#status_msg_txt_ajax').text(message);
+							$('#status_msg_ajax').fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+
+
+        });
+</script>

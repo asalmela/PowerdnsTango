@@ -1,0 +1,123 @@
+INSTALL README
+
+Author: Sarah fuller (sarah@averna.id.au)
+
+This is a quick howto to get you up and running. Perhaps in a later release I'll make a automated installer. For now, should you have any trouble please don't hesitate to contact me for assistance.
+Please note: This installer assumes you have a working powerdns install with either a mysql or postgres backend. If this isn't the case the powerdns documentation is very good, check out
+http://doc.powerdns.com/configuring-db-connection.html for more information.
+
+
+
+1) Ensure you have the following perl modules installed on your system
+
+These modules can be installed via cpan or perhaps from your linux distribution.
+
+
+Dancer
+Dancer::Plugin::Database
+Dancer::Plugin::FlashMessage
+Dancer::Plugin::Ajax
+Dancer::Plugin::Email
+Dancer::Session::Storable
+Crypt::SaltedHash
+Data::Page
+Date::Calc
+Data::Validate::Domain
+Data::Validate::IP
+Email::Valid
+MIME::Base64::URLSafe
+Template::Toolkit
+
+
+
+2) Add the required tango tables to your pdns database
+
+With a database user having the appropriate permissions you'll need to create the tables used by Powerdns Tango. Please note the tables used by pdns itself are not modified, we are only adding new tables. All tables used by Powerdns Tango end with "_tango" for easy identification.
+
+
+For a postgres backend see: INSTALL.POSTGRES
+For a mysql backend see: INSTALL.MYSQL
+
+
+
+3) Create a encrypted password for your admin account
+
+Within the root directory of Powerdns Tango there is a script called "password.pl". Runs this script to generate a encrypted password for your first admin account (the password can be easily changed later within the web interface).
+
+
+EXAMPLE: 
+
+perl password.pl
+
+Password generator
+
+Choose a initial password: my-new-password
+Your new encrypted password: {SSHA}633nw8kgZEDg7FVZojPbRkuL8AuZ7I98
+
+
+
+4) Insert initial required data into your pdns database
+
+Using your newly created encrypted password insert your admin user as well as some initial settings into your database (all settings can be easily changed later within the web interface). 
+Replace "YOUR-LOGIN", "YOUR-GENERATED-ENCRYPTED-PASSWORD", "YOUR-NAME" and "YOUR-EMAIL" with your own values.
+
+
+insert into users_tango (login, password, name, email, type, status, domain_limit, template_limit) values ('YOUR-LOGIN', 'YOUR-GENERATED-ENCRYPTED-PASSWORD', 'YOUR-NAME', 'YOUR-EMAIL', 'admin', 'enabled', '10', '10');
+
+insert into admin_settings_tango (setting, value) values ('account_signup', 'disabled');
+insert into admin_settings_tango (setting, value) values ('password_recovery', 'enabled');
+insert into admin_settings_tango (setting, value) values ('downtime', 'disabled');
+insert into admin_settings_tango (setting, value) values ('default_domain_limit', '10');
+insert into admin_settings_tango (setting, value) values ('default_template_limit', '10');
+insert into admin_settings_tango (setting, value) values ('announcement', 'MOTD');
+
+
+
+5) Modify config.yml to match your system settings
+
+Within the root directory of Powerdns Tango there is a file called "config.yml". You'll need to modify it to match your pdns database settings and email settings under the plugins section.
+Replace "YOUR-DATABASE-TYPE", "YOUR-DATABASE-NAME", "LOCATION-OF-DATABASE", "DATABASE-PORT", "YOUR-DATABASE-USERNAME", "YOUR-DATABASE-PASSWORD" and "YOUR-FROM-EMAIL-ADDRESS" with your own values.
+
+
+DATABASE SETTINGS EXAMPLE:
+
+
+ driver: 'YOUR-DATABASE-TYPE'  			#options: mysql or pg
+    database: 'YOUR-DATABASE-NAME'
+    host: 'LOCATION-OF-DATABASE' 		#hostname or ip address
+    port: DATABASE-PORT 			#defaults: mysql: 3306 or postgres: 5432
+    username: 'YOUR-DATABASE-USERNAME'		
+    password: 'YOUR-DATABASE-PASSWORD'		
+
+
+EMAIL SETTINGS EXAMPLE:
+
+
+  Email:
+    from: 'YOUR-FROM-EMAIL-ADDRESS' 		#the from address of all email sent out by Powerdns Tango
+    subject: 'Powerdns Tango' 			#default subject line of all email sent out by Powerdns Tango
+    driver: smtp 				#default mail driver. see Dancer::Plugin::Email for more options
+    host: localhost 				#default location of smtp server. See Dancer::Plugin::Email for more options
+
+
+
+6) Test the application is working (optional)
+
+Before going to all the trouble of deploying Powerdns Tango if you would like to first test the app you can easily do so. This can be quickly done by using dancer's internal web server.
+Within the root directory of Powerdns Tango run the development web server like so: "perl bin/app.pl". You may now test the app on http://HOSTNAME:3000/
+
+Please note, the development web server should not be used in production.
+
+
+
+7) Deploy the Powerdns Tango web application
+
+The web app supports many types of deployments for apache, nginx and lighttpd. Detailed documentation for deployment specifics can be found at https://metacpan.org/module/Dancer::Deployment 
+Choose the deployment option that best suites your environment. If all options were equal, I'd personally recommend nginx with plack but any listed option will work just fine.
+
+
+
+Assuming everything went well you should now be abled to access the web application and login with the user you created.
+
+
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+    <meta charset="UTF-8" />
+        <title>Powerdns Tango</title>
+	<meta name="description" content="Powerdns Tango is a web frontend for powerdns written in the perl dancer framework. Designed to make DNS management simple, easy and as quick as possible." />
+	<meta name="keywords" content="powerdns, powerdns frontend, pdns frontend, dns, webapp, frontend, front-end, perl, sysadmin, system administration, system administrations, administration, domain, nameserver, spf, txt, cname, dns records" />
+	<meta name="author" content="Sarah Fuller - sarah@averna.id.au" />
+	<meta name="robots" content="index,follow" />
+        <link type="text/css" href="/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+        <link type="text/css" href="/css/main.css" rel="stylesheet" />
+        <script type="text/javascript" src="/javascripts/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="/javascripts/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="/javascripts/jquery.validate.js"></script>
+ </head>
+   <body>
+     <!-- header -->
+                <div id="header" class="ui-corner-tl ui-corner-tr">Powerdns <span>Tango</span>
+		
+			<div id="nav_menu_bg">
+        			<ul id="nav_menu">
+		
+        			</ul>
+			</div>
+                </div>
+     <!-- end header -->
+     <!-- content -->
+	<div id="wrapper" class="ui-corner-bl ui-corner-br">
+	  <div id="content">
+	   <div id="status_msg_ajax" class="flash_message flash ui-state-highlight ui-corner-all"><img src="/images/icons/accept.png" /><span id="status_msg_txt_ajax"></span></div>
+	   <div id="error_msg_ajax" class="flash_error flash ui-state-highlight ui-corner-all"><img src="/images/icons/exclamation.png" /><span id="error_msg_txt_ajax"></span></div>
+	   <img src="/images/logo_medium.png" alt="404" /><div id="_404"><span>500<br></span><p>It would appear the page you've gone looking for isn't all there.<br>Don't feel down, you may have noticed I'm not all there myself.</p>
+	  </div>
+	</div>
+     <!-- end content -->
+     <!-- footer -->
+      <div id="footer">
+        <span><a href="https://github.com/averna-syd/PowerdnsTango">Powerdns Tango</a></span><span> &copy; 2011 <a href="mailto:sarah@averna.id.au">Sarah Fuller</a></span><br>
+        <span>Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]</span>
+      </div>
+    <!-- end Footer -->
+   </body>
+</html>

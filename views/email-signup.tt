@@ -1,0 +1,38 @@
+<html>
+<body bgcolor="#2D2D2D">
+<table width="100%" height="100%" align="center" border="0" cellpadding="0" cellspacing="0" bgcolor="#2D2D2D">
+        <tbody>
+                <tr>
+                        <td valign="top" height="50">
+                        <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+                          <tbody>
+                                <tr>
+                                        <td valign="top"><font color="#604977" face="Helvetica, Arial, sans-serif" size="6"><br><strong>Powerdns </strong></font><font color="#ffffff" face="Helvetica, Arial, sans-serif" size="6">Tango<br></font><br></td>
+                                </tr>
+                           </tbody>
+                          </table>
+                        </td>
+                </tr>
+                <tr>
+                        <td valign="top">
+                        <table align="center" border="0" cellpadding="40" cellspacing="0" width="600" bgcolor="#ffffff">
+                          <tbody>
+                                <tr>
+                                        <td valign="top">
+<font color="#5a5a5a" face="Helvetica, Arial, sans-serif" size="3">Dear [% name %],<br><br>
+You are receiving this automated email because you have signed up to Powerdns Tango. Your new account is currently awaiting conformation. Signup details are as follows:<br><br>
+Login: [% login %]<br>
+Name: [% name %]<br>
+Email: [% email %]<br><br>
+To activate your account please follow this <a href="[% request.uri_base %]/[% url %]">link</a>.<br><br>
+</font></td>
+                                </tr>
+                           </tbody>
+                          </table>
+                        <br><br><br><br>
+                        </td>
+                </tr>
+        </tbody>
+</table>
+</body>
+</html>

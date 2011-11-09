@@ -1,0 +1,334 @@
+<div id="mini_menu_bg">
+        <ul id="mini_menu">
+                <li><a id="display_add_button" class="display_add_button" href="#">Add template</a></li>
+        </ul>
+</div>
+<div id="display_add_block" class="display_hidden">
+        <span class="page_title">Add Template</span>
+        <a href="#" class="sub_menu"><img id="display_add_hide" class="sub_menu display_add_hide" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+        <a href="#" class="sub_menu"><img id="display_add_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_add">
+                <form id="add_template_form" method="post" action="[% request.uri_base %]/templates/add">
+                        <ul class="form ui-corner-all">
+                                <li id="add_name">
+                                        <label>Name</label>
+                                        <input id="add_template_name" name="add_template_name" type="text" value="" maxlength="255" class="ui-corner-all" />
+                                </li>
+                                <li>
+                                        <input type="submit" value="Save" /><button class="display_add_hide">Cancel</button>
+                                </li>
+                        </ul>
+                </form>
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="display_templates_block">
+        <table id="block_table">
+                <tr>
+                        <td id="block_title">
+                                <span class="page_title">Templates</span>
+				<a href="#"><img src="/images/icons/database_add.png" class="display_add_button center" alt="Add template" title="Add template" /></a>
+                        </td>
+                        <td id="block_search">
+                                <form method="post" action="[% request.uri_base %]/templates">
+                                        <input type="text" name="template_search" maxlength="255" class="ui-corner-all"/>&nbsp;<input type="submit" value="Search" />
+                                </form>
+                        </td>
+                        <td id="block_util">
+                                <a href="#" class="sub_menu"><img id="display_templates_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+                        </td>
+                </tr>
+        </table>
+        <div class="line_break"></div>
+        <div id="display_templates">
+                [% colour = 'table_formatter_color2' %]
+                <table class="table_formatter">
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_templates ui-corner-all">
+                                                <span>Template</span>
+                                        </div>
+                                </td>
+                        </tr>
+                [% FOREACH id IN templates.keys.sort %]
+                [% IF colour == 'table_formatter_color1' %]
+                        [% colour = 'table_formatter_color2' %]
+                [% ELSE %]
+                        [% colour = 'table_formatter_color1' %]
+                [% END %]
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_templates ui-corner-all [% colour %]">
+                                                <a href="/templates/edit/records/id/[% templates.$id.id %]" id="template_[% templates.$id.id %]">[% templates.$id.name %]</a>
+                                                <input id="edit_name_[% templates.$id.id %]" name="edit_name" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% templates.$id.name %]" />
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_links ui-corner-all [% colour %]">
+                                                <a href="#"><img id="edit_template_[% templates.$id.id %]" class="edit_template_button" edit="[% templates.$id.id %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
+                                                <a href="/templates/delete/id/[% templates.$id.id %]" class="confirm_link"><img id="delete_template_[% templates.$id.id %]" delete="[% templates.$id.id %]" src="/images/icons/database_delete.png" class="center" alt="Delete" title="Delete" /></a>
+                                                <a href="#"><img id="save_template_[% templates.$id.id %]" class="save_template_button display_hidden" save="[% templates.$id.id %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
+                                                <a href="#"><img id="cancel_template_[% templates.$id.id %]" class="cancel_template_button display_hidden" cancel="[% templates.$id.id %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
+                                        </div>
+                                </td>
+                        </tr>
+                [% END %]
+                </table>
+        [% IF lastpage > 1 %]
+                <div id="page_sort">
+                        <div class="content_break"></div>
+                        <a href="/templates?p=1&r=[% results %]">&#xab; First</a>
+                        <a href="/templates?p=[% previouspage %]&r=[% results %]">&#x8B; Back</a>
+                        <span>page [% page %] of [% lastpage %]</span>
+                        <a href="/templates?p=[% nextpage %]&r=[% results %]">Next &#x9b;</a>
+                        <a href="/templates?p=[% lastpage %]&r=[% results %]">Last &#xbb;</a>
+                        <div id="results_per_page">
+                                <span>Results per page</span>
+                                <a href="/templates?p=[% page %]&r=25">25</a>
+                                <a href="/templates?p=[% page %]&r=50">50</a>
+                                <a href="/templates?p=[% page %]&r=100">100</a>
+                        </div>
+                </div>
+        [% END %]
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="confirm_action" title="Confirmation" class="display_hidden">
+  This action will permanently delete this template and all of its contents.<br><br>Are you sure?
+</div>
+<script>
+	$(function() {
+		$('input:submit, button').button();
+		$('#nav_menu_templates').addClass('nav_menu_active');
+		$('img').tipTip({ delay: '800' });
+
+                $('#add_template_form').validate({ 
+                	rules: { 
+                  		add_template_name: 'required', 
+                	}, 
+              	}); 
+
+                $('#display_templates_toggle').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+                                $('#display_templates').fadeToggle();
+                });
+
+                $('.display_add_button').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_block').fadeToggle();   
+                });
+                $('.display_add_hide').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_block').fadeOut();
+                });
+
+                $('#display_add_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add').fadeToggle();       
+                });
+
+                $("#confirm_action").dialog({
+                        autoOpen: false,
+                        modal: true
+                });
+
+                $(".confirm_link").click(function(e) {
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        var targetUrl = $(this).attr("href");
+
+                $("#confirm_action").dialog({
+                        buttons : {
+                                "Confirm" : function() {
+                                        window.location.href = targetUrl;
+                                },
+                                "Cancel" : function() {
+                                        $(this).dialog("close");
+                                }
+                        }
+                });
+
+                        $("#confirm_action").dialog("open");
+                });
+
+                        $('.edit_template_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('edit'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/get',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var name = json.name;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#template_' + id).hide();
+                                                        $('input[id=edit_name_' + id + ']').val(name);
+
+                                                        $('#edit_name_' + id).fadeIn();
+                                                        $('#edit_template_' + id).hide();
+                                                        $('#delete_template_' + id).hide();
+                                                        $('#save_template_' + id).fadeIn();
+                                                        $('#cancel_template_' + id).fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+
+                      $('.save_template_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+                                var id =  $(this).attr('save');
+
+                                var record = {
+                                                id: $(this).attr('save'),
+                                                name: $('#edit_name_' + id).val(),
+                                        };
+                                $.ajax({
+                                        type: 'POST',
+                                        url: '[% request.uri_base %]/templates/update',
+                                        dataType: "json",
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var name = json.name;
+						var message = json.message;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_name_' + id).hide();
+                                                        $('#template_' + id).text(name);
+                                                        $('#template_' + id).fadeIn();
+                                                        $('#save_template_' + id).hide();
+                                                        $('#cancel_template_' + id).hide();
+                                                        $('#edit_template_' + id).fadeIn();
+                                                        $('#delete_template_' + id).fadeIn();
+                                                        $('#status_msg_txt_ajax').text(message);
+                                                        $('#status_msg_ajax').fadeIn();
+                                                }
+                                                else
+						{
+                  					$('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+					}
+                                });
+                        });
+
+                        $('.cancel_template_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('cancel'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/templates/get',
+                                        dataType: "json",
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var name = json.name;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_name_' + id).hide();
+                                                        $('#template_' + id).text(name);
+                                                        $('#template_' + id).fadeIn();
+                                                        $('#save_template_' + id).hide();
+                                                        $('#cancel_template_' + id).hide();
+                                                        $('#edit_template_' + id).fadeIn();
+                                                        $('#delete_template_' + id).fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+			});
+
+	});
+</script>
+

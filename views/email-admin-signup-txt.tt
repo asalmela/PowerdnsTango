@@ -1,0 +1,11 @@
+Dear [% admin %],
+
+You are receiving this automated email because someone has signed up to Powerdns Tango. Their account is currently disabled but awaiting administrative approval. Signup details are as follows:
+
+Login: [% login %]
+Name: [% name %]
+Email: [% email %]
+
+To activate their account please follow this link: [% request.uri_base %]/[% url %]
+
+If you wish to deny access to this signup request its recommended you delete the account from the admins section of Powerdns Tango at your earliest convenience.

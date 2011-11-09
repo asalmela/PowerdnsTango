@@ -1,0 +1,1 @@
+<div class='failed'><img src='/images/icons/exclamation.png' alt="Warning" title="Warning" /><span>[% error %]</span></div>

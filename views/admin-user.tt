@@ -1,0 +1,474 @@
+<div id="mini_menu_bg">
+        <ul id="mini_menu">
+                <li><a id="display_reset_password_button" class="display_reset_password_button" href="#">Reset password</a></li>
+		<li><a id="display_domain_owner_button" class="display_domain_owner_button" href="#">Domain ownership</a></li>
+        </ul>
+</div>
+
+<div id="display_reset_password_block" class="display_hidden">
+        <span class="page_title">Reset password</span>
+	<a href="#" class="sub_menu"><img id="display_reset_password_hide" class="sub_menu display_reset_password_button" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+        <a href="#" class="sub_menu"><img id="display_reset_password_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_reset_password">
+	<form id="password_reset" method="post" action="[% request.uri_base %]/admin/user/id/[% user_id %]/reset/password">
+   		<ul class="form ui-corner-all">
+         		<li>
+                  		<label>Password</label>
+                  		<input name="password1" type="password" maxlength="30" value=""  class="ui-corner-all" />
+          		</li>
+          		<li id="password">
+                  		<label>Confirm password</label>
+                  		<input name="password2" type="password" maxlength="30" class="ui-corner-all" />
+          		</li>
+          		<li id="submit">
+                  		<input type="submit" value="Save"/><button class="display_reset_password_button">Cancel</button>
+          		</li>
+    		</ul>
+	</form>
+	</div>
+        <div class="content_break"></div>
+</div>
+
+
+<div id="display_domain_owner_block" class="display_hidden">
+        <span class="page_title">Domain ownership</span>
+        <a href="#" class="sub_menu"><img id="display_domain_owner_hide" class="sub_menu display_domain_owner_button" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+        <a href="#" class="sub_menu"><img id="display_domain_owner_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_domain_owner">
+		<form id="domain_owner" method="post" action="[% request.uri_base %]/admin/user/id/[% user_id %]/update/ownership">
+			<ul class="form ui-corner-all">
+				<li>
+					<label>Owned by [% login %] <span class="help_info">Select domains to remove user ownership</span></label>
+					<SELECT id="domain_owner" MULTIPLE SIZE=10 name="domain_owner">
+                        			[% FOREACH id IN user_domains.keys.sort %]
+                                			<option value="[% user_domains.$id.id %]">[% user_domains.$id.name %]</option>
+                                		[% END %]
+					</SELECT>
+				</li>
+                                <li>
+                                        <label>All domains <span class="help_info">Select domains to give user ownership</span></label>
+                                        <SELECT id="domain_system" MULTIPLE SIZE=10 name="domain_system">
+                                                [% FOREACH id IN system_domains.keys.sort %]
+                                                        <option value="[% system_domains.$id.id %]">[% system_domains.$id.name %]</option>
+                                                [% END %]
+                                        </SELECT>
+                                </li>
+                                <li id="submit">
+                                        <input type="submit" value="Save"/><button class="display_domain_owner_button">Cancel</button>
+                                </li>
+			</ul>
+		</form>
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="display_users_block">
+        <span class="page_title">Account [% login %]</span>
+        <a href="#"><img id="edit_user" edit="[% user_id %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
+        <a href="#"><img id="save_user" class="display_hidden" save="[% user_id %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
+        <a href="#"><img id="cancel_user" class="display_hidden" cancel="[% user_id %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
+        <a href="#" class="sub_menu"><img id="display_users_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_users">
+                <table class="table_formatter">
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_label ui-corner-all table_formatter_color1">
+                                                <span>Username</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color1">
+                                                <span id="login">[% login %]</span>
+                                                <input id="edit_login" class="display_hidden ui-corner-all" type="text" maxlength="30" value="[% login %]" name="edit_login" />
+                                        </div>
+                                </td>
+                        </tr>
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_label ui-corner-all table_formatter_color2">
+                                                <span>Name</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color2">
+                                                <span id="name">[% name %]</span>
+                                                <input id="edit_name" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% name %]" name="edit_name" />
+                                        </div>
+                                </td>
+                        </tr>
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_label ui-corner-all table_formatter_color1">
+                                                <span>Email</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color1">
+                                                <span id="email">[% email %]</span>
+                                                <input id="edit_email" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% email %]" name="edit_email" />
+                                        </div>
+                                </td>
+                        </tr>
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_label ui-corner-all table_formatter_color2">
+                                                <span>Type</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color2">
+                                                <span id="type">[% type %]</span>
+                                                <select id="edit_type" class="display_hidden" title="Select one" name="edit_type">
+                                                        <option value="admin">admin</option>
+                                                        <option value="user">user</option>
+                                                </select>
+                                        </div>
+                                </td>
+                        </tr>
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_label ui-corner-all table_formatter_color1">
+                                                <span>Status</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color1">
+                                                <span id="status">[% status %]</span>
+                                                <select id="edit_status" class="display_hidden" title="Select one" name="edit_status">
+                                                        <option value="enabled">enabled</option>
+                                                        <option value="disabled">disabled</option>
+                                                </select>
+                                        </div>
+                                </td>
+			</tr>
+			<tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_label ui-corner-all table_formatter_color2">
+                                                <span>Domain limit</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color2">
+                                                <span id="domain_limit">[% domain_limit %]</span>
+						<input id="edit_domain_limit" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% domain_limit %]" name="edit_domain_limit" />	
+                                        </div>
+                                </td>
+                        </tr>
+                        <tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_label ui-corner-all table_formatter_color1">
+                                                <span>Template limit</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_soa ui-corner-all table_formatter_color1">
+                                                <span id="template_limit">[% template_limit %]</span>
+                                                <input id="edit_template_limit" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% template_limit %]" name="edit_domain_limit" />
+                                        </div>
+                                </td>
+                        </tr>
+		</table>
+        </div>
+        <div class="content_break"></div>
+</div>
+<script>
+	$(function() {
+		$('input:submit, button').button();
+		$('#nav_menu_admin').addClass('nav_menu_active');
+		$('img').tipTip({ delay: '800' });
+
+                $('.display_reset_password_button').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_reset_password_block').fadeToggle();       
+                });
+
+                $('#display_reset_password_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_reset_password').fadeToggle();       
+                });
+
+                $('.display_domain_owner_button').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_domain_owner_block').fadeToggle();       
+                });
+
+                $('#display_domain_owner_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_domain_owner').fadeToggle();       
+                });
+
+                $('#display_users_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_users').fadeToggle();       
+                });
+
+                        $('#edit_user').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('edit'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/admin/get/user',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var message = json.message;
+						var login = json.login;
+                                                var name = json.name;
+						var email = json.email;
+                                                var type = json.type;
+                                                var user_stat = json.user_stat;
+						var domain_limit = json.domain_limit;
+						var template_limit = json.template_limit;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#login').hide();
+                                                        $('#name').hide();
+							$('#email').hide();
+							$('#type').hide();
+							$('#status').hide();
+							$('#domain_limit').hide();
+							$('#template_limit').hide();
+
+							$('input[id=edit_login]').val(login);
+                                                        $('input[id=edit_name]').val(name);
+							$('input[id=edit_email]').val(email);
+                                                        $('select[id=edit_type]').val(type);
+                                                        $('select[id=edit_status]').val(user_stat);
+							$('input[id=edit_domain_limit]').val(domain_limit);
+							$('input[id=edit_template_limit]').val(template_limit);
+	
+                                                        $('#edit_login').fadeIn();
+                                                        $('#edit_name').fadeIn();
+                                                        $('#edit_email').fadeIn();
+                                                        $('#edit_type').fadeIn();
+                                                        $('#edit_status').fadeIn();
+							$('#edit_domain_limit').fadeIn();
+							$('#edit_template_limit').fadeIn();
+
+                                                        $('#edit_user').hide();
+                                                        $('#save_user').fadeIn();
+                                                        $('#cancel_user').fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+			});
+
+                        $('#cancel_user').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('cancel'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/admin/get/user',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var message = json.message;
+                                                var login = json.login;
+                                                var name = json.name;
+                                                var email = json.email;
+                                                var type = json.type;
+                                                var user_stat = json.user_stat;
+						var domain_limit = json.domain_limit;
+						var template_limit = json.template_limit;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_login').hide();
+                                                        $('#edit_name').hide();
+                                                        $('#edit_email').hide();
+                                                        $('#edit_type').hide();
+                                                        $('#edit_status').hide();
+							$('#edit_domain_limit').hide();
+							$('#edit_template_limit').hide();
+
+                                                        $('#login').text(login);
+                                                        $('#name').text(name);
+                                                        $('#email').text(email);
+                                                        $('#type').text(type);
+                                                        $('#status').text(user_stat);
+							$('#domain_limit').text(domain_limit);
+							$('#template_limit').text(template_limit);
+
+                                                        $('#login').fadeIn();
+                                                        $('#name').fadeIn();
+                                                        $('#email').fadeIn();
+                                                        $('#type').fadeIn();
+                                                        $('#status').fadeIn();
+							$('#domain_limit').fadeIn();
+							$('#template_limit').fadeIn();
+
+                                                        $('#edit_user').fadeIn();
+                                                        $('#save_user').hide();
+                                                        $('#cancel_user').hide();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+
+                        $('#save_user').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+				var id = $(this).attr('save');
+
+                                var record = {
+                                                id: $(this).attr('save'),
+						login: $('#edit_login').val(),
+						name: $('#edit_name').val(),
+						email: $('#edit_email').val(),
+						type: $('#edit_type').val(),
+						user_stat: $('#edit_status').val(),
+						domain_limit: $('#edit_domain_limit').val(),
+						template_limit: $('#edit_template_limit').val(),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/admin/save/user',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var message = json.message;
+                                                var login = json.login;
+                                                var name = json.name;
+                                                var email = json.email;
+                                                var type = json.type;
+                                                var user_stat = json.user_stat;
+						var domain_limit = json.domain_limit;
+						var template_limit = json.template_limit;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_login').hide();
+                                                        $('#edit_name').hide();
+                                                        $('#edit_email').hide();
+                                                        $('#edit_type').hide();
+                                                        $('#edit_status').hide();
+							$('#edit_domain_limit').hide();
+							$('#edit_template_limit').hide();
+
+                                                        $('#login').text(login);
+                                                        $('#name').text(name);
+                                                        $('#email').text(email);
+                                                        $('#type').text(type);
+                                                        $('#status').text(user_stat);
+							$('#domain_limit').text(domain_limit);
+							$('#template_limit').text(template_limit);
+
+                                                        $('#login').fadeIn();
+                                                        $('#name').fadeIn();
+                                                        $('#email').fadeIn();
+                                                        $('#type').fadeIn();
+                                                        $('#status').fadeIn();
+							$('#domain_limit').fadeIn();
+							$('#template_limit').fadeIn();
+
+                                                        $('#edit_user').fadeIn();
+                                                        $('#save_user').hide();
+                                                        $('#cancel_user').hide();
+
+                                                        $('#status_msg_txt_ajax').text(message);
+                                                        $('#status_msg_ajax').fadeIn();
+
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+	});
+</script>
+

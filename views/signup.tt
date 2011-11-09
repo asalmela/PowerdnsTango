@@ -1,0 +1,50 @@
+<span class="page_title">Sign up</span>
+<div class="line_break"></div>
+<div class="content_break"></div>
+<form id="signup_form" method="post" action="[% request.uri_base %]/signup">
+                        <ul class="form ui-corner-all">
+                                <li>
+                                        <label>Login</label>
+                                        <input id="login" name="login" type="text" value="[% login %]"  maxlength="30" class="ui-corner-all" />
+                                </li>
+                                <li>
+                                        <label>Name</label>
+                                        <input id="name" name="name" type="text" value="[% name %]"  maxlength="255" class="ui-corner-all" />
+                                </li>
+                                <li>
+                                        <label>Password</label>
+                                        <input id="password1" name="password1" type="password" maxlength="30" class="ui-corner-all" />
+                                </li>
+                                <li>
+                                        <label>Confirm password</label>
+                                        <input id="password2" name="password2" type="password" maxlength="30" class="ui-corner-all" />
+                                </li>
+                                <li>
+                                        <label>Email</label>
+                                        <input id="email" name="email" class="ui-corner-all" type="text" maxlength="255" value="[% email %]" />
+                                </li>
+                                <li>
+                                        <input type="submit" value="Submit" /><a href="/login" class="button_format">Cancel</a>
+                                </li>
+                        </ul>
+</form>
+<div id="logo_small"><img src="/images/logo_small.png" alt="logo" title="meow" /></div>
+<script>
+        $(function() {
+                $('input:submit, button, .button_format').button();
+		$('img').tipTip({ delay: '800' });
+
+                $("#signup_form").validate({ 
+                rules: { 
+		  login: 'required',
+		  name: 'required',
+		  password1: 'required',
+		  password2: 'required',
+                  email: { 
+                  required: true, 
+                  email: true 
+                },
+                }, 
+              });
+        });
+</script>

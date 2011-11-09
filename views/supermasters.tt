@@ -1,0 +1,381 @@
+<div id="mini_menu_bg">
+        <ul id="mini_menu">
+		<li><a id="display_add_button" class="display_add_button" href="#">Add supermaster</a></li>
+                <li></li>
+        </ul>
+</div>
+<div id="display_add_block" class="display_hidden">
+        <span class="page_title">Add supermaster</span>
+        <a href="#" class="sub_menu"><img id="display_add_hide" class="sub_menu display_add_button" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+        <a href="#" class="sub_menu"><img id="display_add_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_add">
+                <form id="add_supermaster_form" method="post" action="[% request.uri_base %]/supermasters/add">
+                        <ul class="form ui-corner-all">
+                                <li>
+                                        <label>Nameserver</label>
+                                        <input id="add_nameserver" name="add_nameserver" type="text" value="" maxlength="255" class="ui-corner-all" />
+                                </li>
+                                <li>
+                                        <label>IP address</label>
+					<input id="add_ipaddr" name="add_ipaddr" type="text" value="" maxlength="255" class="ui-corner-all" />
+                                </li>
+                                <li>
+                                        <input type="submit" value="Save" /><button class="display_add_button">Cancel</button>
+                                </li>
+                        </ul>
+                </form>
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="display_supermasters_block">
+        <table id="block_table">
+                <tr>
+                        <td id="block_title">
+                                <span class="page_title">Supermasters</span>
+				<a href="#"><img src="/images/icons/database_add.png" class="display_add_button center" alt="Add supermaster" title="Add supermaster" /></a>
+                        </td>
+                        <td id="block_search">
+                                <form method="post" action="[% request.uri_base %]/supermasters">
+                                        <input type="text" name="supermaster_search" class="ui-corner-all" maxlength="255" />&nbsp;<input type="submit" value="Search" />
+                                </form>
+                        </td>
+                        <td id="block_util">
+				<a href="#" class="sub_menu"><img id="display_supermasters_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+                        </td>
+                </tr>
+        </table>
+	<div class="line_break"></div>
+	<div id="display_supermasters">
+		[% colour = 'table_formatter_color2' %]
+		<table class="table_formatter">
+			<tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_supermasters ui-corner-all">
+                                                <span>Nameserver</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_type ui-corner-all">
+                                                <span>IP address</span>
+                                        </div>
+                                </td>
+			</tr>
+		[% count = 1 %]
+		[% FOREACH id IN supermasters.keys.sort %]
+		[% IF colour == 'table_formatter_color1' %]
+    			[% colour = 'table_formatter_color2' %]
+		[% ELSE %]
+    			[% colour = 'table_formatter_color1' %]
+		[% END %]
+ 			<tr>
+  				<td>
+   					<div class="table_formatter table_formatter_supermasters ui-corner-all [% colour %]">
+						<span id="nameserver_[% count %]">[% supermasters.$id.nameserver %]</span>
+						<input id="edit_nameserver_[% count %]" name="edit_nameserver" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% supermasters.$id.nameserver %]" />
+   					</div>
+   				</td>
+   				<td>
+   					<div class="table_formatter table_formatter_ipaddr ui-corner-all [% colour %]">
+        					<span id="ipaddr_[% count %]">[% supermasters.$id.ip %]</span>
+						<input id="edit_ipaddr_[% count %]" name="edit_ipaddr" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% supermasters.$id.ip %]" />
+   					</div>
+  				</td>
+  				<td>
+   					<div class="table_formatter table_formatter_links ui-corner-all [% colour %]">
+          					<a href="#"><img id="edit_supermaster_[% count %]" class="edit_supermaster_button" edit="[% count %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
+          					<a href="/supermasters/delete/ip/[% supermasters.$id.ip %]" class="confirm_link"><img id="delete_supermaster_[% count %]" delete="[% count %]" src="/images/icons/database_delete.png" class="center" alt="Delete" title="Delete" /></a>
+						<a href="#"><img id="save_supermaster_[% count %]" class="save_supermaster_button display_hidden" save="[% count %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
+						<a href="#"><img id="cancel_supermaster_[% count %]" class="cancel_supermaster_button display_hidden" cancel="[% count %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
+   					</div>
+  				</td>
+ 			</tr>
+		[% count = count + 1 %]
+		[% END %]
+		</table>
+        [% IF lastpage > 1 %]
+                <div id="page_sort">
+                        <div class="content_break"></div>
+                        <a href="/supermasters?p=1&r=[% results %]">&#xab; First</a>
+                        <a href="/supermasters?p=[% previouspage %]&r=[% results %]">&#x8B; Back</a>
+                        <span>page [% page %] of [% lastpage %]</span>
+                        <a href="/supermasters?p=[% nextpage %]&r=[% results %]">Next &#x9b;</a>
+                        <a href="/supermasters?p=[% lastpage %]&r=[% results %]">Last &#xbb;</a>
+                        <div id="results_per_page">
+                                <span>Results per page</span>
+                                <a href="/supermasters?p=[% page %]&r=25">25</a>
+                                <a href="/supermasters?p=[% page %]&r=50">50</a>
+                                <a href="/supermasters?p=[% page %]&r=100">100</a>
+                        </div>
+                </div>
+        [% END %]
+	</div>
+	<div class="content_break"></div>
+</div>
+<div id="confirm_action" title="Confirmation" class="display_hidden">
+  This action will permanently delete this supermaster.<br><br>Are you sure?
+</div>
+<script>
+        $(function() {
+                $('input:submit, button').button();
+                $('#nav_menu_supermasters').addClass('nav_menu_active');
+		$('img').tipTip({ delay: '800' });
+
+                $('#add_supermaster_form').validate({ 
+                        rules: { 
+                                add_nameserver: 'required', 
+				add_ipaddr: 'required',
+                        }, 
+                }); 
+
+                $('.display_add_button').click(function(e){
+			e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_block').fadeToggle();
+                });
+
+                $('#display_add_toggle').click(function(e){
+			e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add').fadeToggle();       
+                });
+
+		$('#display_supermasters_toggle').click(function(e){
+                     	e.preventDefault();
+			$('.flash').fadeOut();
+                       	$('#display_supermasters').fadeToggle();
+		});
+
+                $("#confirm_action").dialog({
+                        autoOpen: false,
+                        modal: true
+                });
+
+                $(".confirm_link").click(function(e) {
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        var targetUrl = $(this).attr("href");
+
+                $("#confirm_action").dialog({
+                        buttons : {
+                                "Confirm" : function() {
+                                        window.location.href = targetUrl;
+                                },
+                                "Cancel" : function() {
+                                        $(this).dialog("close");
+                                }
+                        }
+                });
+
+                        $("#confirm_action").dialog("open");
+                });
+
+  		$('.edit_supermaster_button').click(function(e){
+                                e.preventDefault();
+				$('.flash').fadeOut();
+
+				var id = $(this).attr('edit');
+
+                                var record = {
+						id: $(this).attr('edit'),
+                                                ip: $('#ipaddr_' + id).text(),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/supermasters/get',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+		  			statusCode: {
+
+    						404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+						},
+						500: function() {
+						        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+    						}
+    					},
+
+					error: function() {
+ 	                                                $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+  					},
+
+                                        success: function(json){
+						var id = json.id;
+						var stat = json.stat;
+						var message = json.message;
+                                                var nameserver = json.nameserver;
+						var ip = json.ip;
+
+						if ( stat == 'ok' )
+						{
+							$('#nameserver_' + id).hide();
+							$('#ipaddr_' + id).hide();
+							$('input[id=edit_nameserver_' + id + ']').val(nameserver);
+							$('input[id=edit_ipaddr_' + id + ']').val(ip);
+							
+							$('#edit_nameserver_' + id).fadeIn();
+							$('#edit_ipaddr_' + id).fadeIn();
+
+							$('#edit_supermaster_' + id).hide();
+							$('#delete_supermaster_' + id).hide();
+							$('#save_supermaster_' + id).fadeIn();
+							$('#cancel_supermaster_' + id).fadeIn();
+						}
+						else
+						{
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+						}
+                                        }
+                                });
+                        });
+
+  			$('.cancel_supermaster_button').click(function(e){
+                                e.preventDefault();
+				$('.flash').fadeOut();
+
+				var id = $(this).attr('cancel');
+
+                                var record = {
+                                                id: $(this).attr('cancel'),
+						ip: $('#ipaddr_' + id).text(),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/supermasters/get',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+		  			statusCode: {
+
+    						404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+						},
+						500: function() {
+						        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+    						}
+    					},
+
+					error: function() {
+ 	                                                $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+  					},
+
+                                        success: function(json){
+						var id = json.id;
+						var stat = json.stat;
+						var message = json.message;
+                                                var nameserver = json.nameserver;
+						var ip = json.ip;
+
+						if ( stat == 'ok' )
+						{
+							$('#edit_nameserver_' + id).hide();
+							$('#edit_ipaddr_' + id).hide();
+
+                                                        $('input[id=edit_nameserver_' + id + ']').val(nameserver);
+                                                        $('input[id=edit_ipaddr_' + id + ']').val(ip);
+							$('#nameserver_' + id).text(nameserver);
+							$('#ipaddr_' + id).text(ip);
+
+							$('#nameserver_' + id).fadeIn();
+							$('#ipaddr_' + id).fadeIn();
+
+							$('#save_supermaster_' + id).hide();
+							$('#cancel_supermaster_' + id).hide();
+							$('#edit_supermaster_' + id).fadeIn();
+							$('#delete_supermaster_' + id).fadeIn();
+						}
+						else
+						{
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+						}
+                                        }
+                                });
+                        });
+
+                        $('.save_supermaster_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+                                var id = $(this).attr('save');
+
+                                var record = {
+                                                id: $(this).attr('save'),
+                                                ip: $('#edit_ipaddr_' + id).val(),
+						nameserver: $('#edit_nameserver_' + id).val(),
+						old_ip: $('#ipaddr_' + id).text(),
+						old_nameserver: $('#nameserver_' + id).text(),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/supermasters/update',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var message = json.message;
+                                                var nameserver = json.nameserver;
+                                                var ip = json.ip;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        $('#edit_nameserver_' + id).hide();
+                                                        $('#edit_ipaddr_' + id).hide();
+
+                                                        $('input[id=edit_nameserver_' + id + ']').val(nameserver);
+                                                        $('input[id=edit_ipaddr_' + id + ']').val(ip);
+                                                        $('#nameserver_' + id).text(nameserver);
+                                                        $('#ipaddr_' + id).text(ip);
+
+                                                        $('#nameserver_' + id).fadeIn();
+                                                        $('#ipaddr_' + id).fadeIn();
+
+                                                        $('#save_supermaster_' + id).hide();
+                                                        $('#cancel_supermaster_' + id).hide();
+                                                        $('#edit_supermaster_' + id).fadeIn();
+                                                        $('#delete_supermaster_' + id).fadeIn();
+
+							$('#status_msg_txt_ajax').text(message);
+							$('#status_msg_ajax').fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+	});
+</script>

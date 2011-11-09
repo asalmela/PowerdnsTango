@@ -1,0 +1,9 @@
+<img src="/images/logo_medium.png" alt="404" /><div id="_404"><span>404<br></span><p>It would appear the page you've gone looking for isn't all there.<br>Don't feel down, you may have noticed I'm not all there myself.</p></div>
+<script>
+        $(function() {
+                $('input:submit, button').button();
+		$('img').tipTip({ delay: '800' });
+
+                $('#nav_menu_account').addClass('nav_menu_active');
+        });
+</script>

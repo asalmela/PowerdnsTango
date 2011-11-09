@@ -1,0 +1,6 @@
+Dear [% name %],
+
+You are receiving this automated email because your Powerdns Tango account has been activated.
+
+To login into your account please follow this <a href="[% request.uri_base %]/login">link</a>.
+

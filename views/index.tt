@@ -1,0 +1,118 @@
+<div id="mini_menu_bg">
+        <ul id="mini_menu">
+                <li></li>
+                <li></li>
+        </ul>
+</div>
+<span class="page_title">Home</span>
+<div class="line_break"></div>
+<div class="content_break"></div>
+<div id="display_home_block">
+	<div class="home_column">
+		<div class="portlet">
+			<div class="portlet_header">Announcements</div>
+			<div class="portlet_content">
+				<div class="portlet_text ui-corner-all">
+					[% motd %]
+				</div>
+			</div>
+		</div>
+		<div class="portlet">
+			<div class="portlet_header">Usage</div>
+			<div class="portlet_content">
+				<div class="portlet_text ui-corner-all">
+					<table>
+                                                <tr>    
+                                                        <td>
+                                                                <span class="portlet_bold">Your domain limit</span>
+                                                        </td>
+                                                        <td class="portlet_right">
+                                                                <span>[% user_domains %] / [% user_domain_limit %]</span>
+                                                        </td>
+                                                </tr>
+					[% IF session.user_type == 'admin' %]
+                                                <tr>
+                                                        <td>
+                                                                <span class="portlet_bold">Total system domains</span>
+                                                        </td>
+                                                        <td class="portlet_right">
+                                                                <span>[% system_domains %]<br></span>
+                                                        </td>
+                                                </tr>
+					[% END %]
+						<tr>
+							<td></td>
+							<td></td>
+						</tr>
+						                                                <tr>
+                                                        <td>
+                                                                <span class="portlet_bold">Your template limit</span>
+                                                        </td>
+                                                        <td class="portlet_right">
+                                                                <span>[% user_templates %] / [% user_template_limit %]</span>
+                                                        </td>
+                                                </tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="home_column">
+		<div class="portlet">
+			<div class="portlet_header">Latest domains</div>
+			<div class="portlet_content">
+				<div class="portlet_text ui-corner-all">
+					<table>
+				[% FOREACH id IN latest_domains.keys.sort %]
+					<tr>
+						<td>
+							<a href="/domains/edit/records/id/[% latest_domains.$id.id %]">[% latest_domains.$id.name %]</a>
+						</td>
+					</tr>
+				[% END %]
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="portlet">
+			<div class="portlet_header">Latest templates</div>
+			<div class="portlet_content">
+                                <div class="portlet_text ui-corner-all">
+                                        <table>
+                                [% FOREACH id IN latest_templates.keys.sort %]
+                                        <tr>
+                                                <td>
+                                                        <a href="/templates/edit/records/id/[% latest_templates.$id.id %]">[% latest_templates.$id.name %]</a>
+                                                </td>
+                                        </tr>
+                                [% END %]
+                                        </table>
+                                </div>
+                        </div>
+			</div>
+		</div>
+	</div>
+	<div class="content_break"></div>
+</div>
+<script>
+	$(function() {
+		$('input:submit, button').button();
+		$('#nav_menu_home').addClass('nav_menu_active');
+		$('img').tipTip({ delay: '800' });
+
+		$( ".portlet" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+			.find( ".portlet_header" )
+				.addClass( "ui-widget-header ui-corner-all" )
+				.prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+				.end()
+			.find( ".portlet_content" );
+
+		$( ".portlet_header .ui-icon" ).click(function() {
+			$( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+			$( this ).parents( ".portlet:first" ).find( ".portlet_content" ).toggle();
+		});
+
+		$( ".home_column" ).disableSelection();
+	});
+</script>
+

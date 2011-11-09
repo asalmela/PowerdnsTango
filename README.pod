@@ -1,0 +1,210 @@
+=pod
+
+=head1 Powerdns Tango
+
+Powerdns Tango is a simple web frontend for powerdns written in the perl dancer framework.
+Its design philosophy is to hopefully make DNS management simple, easy and as quick as possible.
+This is an initial public release so please consider this beta software that's subject to change.
+Feedback and suggestions welcome.
+
+
+=head2 Features
+
+
+
+=over 2
+
+=item *
+
+Simple and clean HTML5 interface
+
+=item *
+
+Support for both mysql and postgres backends
+
+=item *
+
+Support deployment for apache, nginx and lighttpd
+
+=item *
+
+Two tier user system (admins & end users)
+
+=item *
+
+DNS template system for fast deployment
+
+=item *
+
+Abilitly to add multiple domains at once (bulk domain additions)
+
+=item *
+
+Supported domains NATIVE, MASTER, SLAVE
+
+=item *
+
+Supported DNS records A, AAAA, CNAME, LOC, MX, NS, PTR, SPF, SRV, TXT
+
+=item *
+
+Secure forgotten password recovery (enable or disable)
+
+=item *
+
+Secure signup (fully automated or admin approved or disabled)
+
+=item *
+
+Admin create, delete and modify users
+
+=item *
+
+Admin set domain and template addition limit for end users
+
+=item *
+
+Admin control/modify domain ownership
+
+=item *
+
+Admin put application in maintenance mode (deny end user login)
+
+
+=back
+
+
+
+=head2 Website demo
+
+I'll worry about this later.
+
+  maybe
+
+
+
+=head2 Install
+
+
+  SEE: INSTALL.README
+
+
+
+=head2 Supported browsers
+
+The following web browsers are supported.
+It's possible some older versions of these browsers or other browers not listed here will work without any issues.
+
+
+=over 2
+
+=item *
+
+Firefox 4 (and above)
+
+=item *
+
+Chrome 9 (and above)
+
+=item *
+
+Internet Explorer 8 (and above)
+
+=item *
+
+Safari 5 (and above)
+
+=item *
+
+Opera 11 (and above)
+
+=back
+
+
+Please note, Internet Explorer 7 and below is not supported.
+
+
+
+=head2 Feedback / Reporting bugs / Contact
+
+You can reach me via email sarah@averna.id.au or on google plus
+https://plus.google.com/117340570849980417814/about
+
+
+
+=head2 Acknowledgements
+
+Really couldn't have done this without the help of these fine
+projects/people.
+
+
+=over 2
+
+=item *
+
+Name of project & giving me the idea in the first place:
+Craig Small
+(http://tdreams.net/)
+
+=item *
+
+Icon Set:
+Silk Icons
+(http://www.famfamfam.com/lab/icons/silk/)
+
+=item *
+
+Cheshire cat logo:
+Kelsey Christenson
+(http://duckey5.deviantart.com/)
+
+=item *
+
+Dancer framework:
+(http://perldancer.org/)
+
+=item *
+
+jquery:
+(http://jquery.com/)
+
+=item *
+
+jquery ui:
+(http://jqueryui.com/)
+
+=item *
+
+jquery validation:
+(http://bassistance.de/jquery-plugins/jquery-plugin-validation/)
+
+=item *
+
+jquery TipTip: (http://code.drewwilson.com/entry/tiptip-jquery-plugin)
+
+=back
+
+
+
+=head2 License
+
+    Powerdns Tango copyright (C) 2011 Sarah Fuller
+
+    See LICENSE.README for a full copy of the GPLv3 license.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+=cut
+

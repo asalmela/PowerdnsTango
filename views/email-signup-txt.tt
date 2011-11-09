@@ -1,0 +1,9 @@
+Dear [% name %],
+
+You are receiving this automated email because you have signed up to Powerdns Tango. Your new account is currently awaiting conformation. Signup details are as follows:
+
+Login: [% login %]
+Name: [% name %]
+Email: [% email %]
+
+To activate your account please follow this link: [% request.uri_base %]/[% url %]

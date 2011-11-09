@@ -1,0 +1,579 @@
+<div id="mini_menu_bg">
+	<ul id="mini_menu">
+        	<li><a id="display_add_button" class="display_add_button" href="#">Add domain</a></li>
+                <li><a id="display_add_bulk_button" href="#">Add bulk domains</a></li>
+	</ul>
+</div>
+<div id="display_add_block" class="display_hidden">
+	<span class="page_title">Add domain</span>
+	<a href="#" class="sub_menu"><img id="display_add_hide" class="sub_menu display_add_hide" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+	<a href="#" class="sub_menu"><img id="display_add_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+	<div class="line_break"></div>
+	<div class="content_break"></div>
+	<div id="display_add">
+		<form id="add_domain_form" method="post" action="[% request.uri_base %]/domains/add">
+        		<ul class="form ui-corner-all">
+                		<li id="add_name">
+                  			<label>Domain</label>
+                  			<input id="add_domain_name" name="add_domain_name" type="text" value="" maxlength="255" class="ui-corner-all" />
+                		</li>
+                		<li id="add_type">
+                  			<label>Type</label>
+                  			<select id="add_domain_type" title="Select one" name="add_domain_type">
+						<option value="NATIVE" selected="selected">NATIVE</option>
+                                		<option value="MASTER">MASTER</option>
+                                		<option value="SLAVE">SLAVE</option>
+                   			</select>
+                		</li>
+				<li id="add_master_addr_display" class="display_hidden">
+					<label>Master Address</label>	
+				 	<input id="add_master_addr" name="add_master_addr" class="ui-corner-all" maxlength="128" type="text" value="" />
+				</li>
+                                <li id="add_template">
+                                        <label>Template</label>
+                                        <select id="add_domain_template" title="Select one" name="add_domain_template">
+						<option value="0" selected="selected">none</option>
+                                        	[% FOREACH id IN templates.keys.sort %]
+                                                	<option value="[% templates.$id.id %]">[% templates.$id.name %]</option>
+                                        	[% END %]
+                                        </select>
+                                </li>
+                		<li>
+                        		<input type="submit" value="Save" /><button class="display_add_hide">Cancel</button>
+                		</li>
+        		</ul>
+		</form>
+	</div>
+	<div class="content_break"></div>
+</div>
+<div id="display_add_bulk_block" class="display_hidden">
+        <span class="page_title">Add bulk domains</span>
+        <a href="#" class="sub_menu"><img id="display_add_bulk_hide" class="sub_menu display_add_bulk_hide" src="/images/icons/application_delete.png" alt="Close" title="Close" class="alignright" /></a>
+        <a href="#" class="sub_menu"><img id="display_add_bulk_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+        <div class="line_break"></div>
+        <div class="content_break"></div>
+        <div id="display_add_bulk">
+                <form id="add_bulk_domain_form" method="post" action="[% request.uri_base %]/domains/add/bulk">
+                        <ul class="form ui-corner-all">
+                                <li id="add_bulk_name">
+                                        <label>Domains <span id="help_info">Enter one domain per line</span></label>
+                                        <textarea id="add_bulk_domain_name" name="add_bulk_domain_name" class="ui-corner-all" ></textarea>
+                                </li>
+                                <li id="add_bulk_type">
+                                        <label>Type</label>
+                                        <select id="add_bulk_domain_type" title="Select one" name="add_bulk_domain_type">
+						<option value="NATIVE" selected="selected">NATIVE</option>
+                                                <option value="MASTER">MASTER</option>
+                                                <option value="SLAVE">SLAVE</option>
+                                        </select>
+                                </li>
+                                <li id="add_bulk_master_addr_display" class="display_hidden">
+                                        <label>Master Address</label>
+                                        <input id="add_bulk_master_addr" name="add_bulk_master_addr" class="ui-corner-all" type="text" maxlength="128" value="" />
+                                </li>
+                                <li id="add_bulk_template">
+                                        <label>Template</label>
+                                        <select id="add_bulk_domain_template" title="Select one" name="add_bulk_domain_template">
+						<option value="0" selected="selected">none</option>
+                                                [% FOREACH id IN templates.keys.sort %]
+                                                        <option value="[% templates.$id.id %]">[% templates.$id.name %]</option>
+                                                [% END %]
+                                        </select>
+                                </li>
+                                <li>
+                                        <input type="submit" value="Save" /><button class="display_add_bulk_hide">Cancel</button>
+                                </li>
+                        </ul>
+                </form>
+        </div>
+        <div class="content_break"></div>
+</div>
+<div id="display_domains_block">
+        <table id="block_table">
+                <tr>
+                        <td id="block_title">
+                                <span class="page_title">Domains</span>
+				<a href="#"><img src="/images/icons/database_add.png" class="display_add_button center" alt="Add domain" title="Add domain" /></a>
+                        </td>
+                        <td id="block_search">
+                                <form method="post" action="[% request.uri_base %]/domains">
+                                        <input type="text" name="domain_search" class="ui-corner-all" maxlength="255" />&nbsp;<input type="submit" value="Search" />
+                                </form>
+                        </td>
+                        <td id="block_util">
+				<a href="#" class="sub_menu"><img id="display_domains_toggle" class="sub_menu" src="/images/icons/application_double.png" alt="Toggle" title="Toggle" class="alignright" /></a>
+                        </td>
+                </tr>
+        </table>
+	<div class="line_break"></div>
+	<div id="display_domains">
+		[% colour = 'table_formatter_color2' %]
+		<table class="table_formatter">
+			<tr>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_domains ui-corner-all">
+                                                <span>Zone</span>
+                                        </div>
+                                </td>
+                                <td>
+                                        <div class="table_formatter table_formatter_header table_formatter_type ui-corner-all">
+                                                <span>Type</span>
+                                        </div>
+                                </td>
+			</tr>
+		[% FOREACH id IN domains.keys.sort %]
+		[% IF colour == 'table_formatter_color1' %]
+    			[% colour = 'table_formatter_color2' %]
+		[% ELSE %]
+    			[% colour = 'table_formatter_color1' %]
+		[% END %]
+ 			<tr>
+  				<td>
+   					<div class="table_formatter table_formatter_domains ui-corner-all [% colour %]">
+						<a href="/domains/edit/records/id/[% domains.$id.id %]" id="domain_[% domains.$id.id %]">[% domains.$id.name %]</a>
+						<input id="edit_name_[% domains.$id.id %]" name="edit_name" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% domains.$id.name %]" />
+   					</div>
+   				</td>
+   				<td id="td_formatter_type">
+   					<div class="table_formatter table_formatter_type ui-corner-all [% colour %]">
+        					<span id="type_[% domains.$id.id %]">[% domains.$id.type %]</span>
+						<select id="edit_type_[% domains.$id.id %]" edit="[% domains.$id.id %]" class="edit_type display_hidden" title="Select one" name="edit_type">
+							<option value="NATIVE">NATIVE</option>
+                                                	<option value="MASTER">MASTER</option>
+                                                       	<option value="SLAVE">SLAVE</option>
+                                                </select>
+                                                <span id="display_master_[% domains.$id.id %]" class="display_hidden display_master">
+                                                        Master Addr <input id="master_addr_[% domains.$id.id %]" name="master_addr" class="ui-corner-all" type="text" maxlength="128" value="" />
+                                                </span>
+   					</div>
+  				</td>
+  				<td>
+   					<div class="table_formatter table_formatter_links ui-corner-all [% colour %]">
+          					<a href="#"><img id="edit_domain_[% domains.$id.id %]" class="edit_domain_button" edit="[% domains.$id.id %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
+          					<a href="/domains/delete/id/[% domains.$id.id %]" class="confirm_link"><img id="delete_domain_[% domains.$id.id %]" delete="[% domains.$id.id %]" src="/images/icons/database_delete.png" class="center" alt="Delete" title="Delete" /></a>
+						<a href="#"><img id="save_domain_[% domains.$id.id %]" class="save_domain_button display_hidden" save="[% domains.$id.id %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
+						<a href="#"><img id="cancel_domain_[% domains.$id.id %]" class="cancel_domain_button display_hidden" cancel="[% domains.$id.id %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
+   					</div>
+  				</td>
+ 			</tr>
+		[% END %]
+		</table>
+        [% IF lastpage > 1 %]
+                <div id="page_sort">
+                        <div class="content_break"></div>
+                        <a href="/domains?p=1&r=[% results %]">&#xab; First</a>
+                        <a href="/domains?p=[% previouspage %]&r=[% results %]">&#x8B; Back</a>
+                        <span>page [% page %] of [% lastpage %]</span>
+                        <a href="/domains?p=[% nextpage %]&r=[% results %]">Next &#x9b;</a>
+                        <a href="/domains?p=[% lastpage %]&r=[% results %]">Last &#xbb;</a>
+                        <div id="results_per_page">
+                                <span>Results per page</span>
+                                <a href="/domains?p=[% page %]&r=25">25</a>
+                                <a href="/domains?p=[% page %]&r=50">50</a>
+                                <a href="/domains?p=[% page %]&r=100">100</a>
+                        </div>
+                </div>
+        [% END %]
+	</div>
+	<div class="content_break"></div>
+</div>
+<div id="confirm_action" title="Confirmation" class="display_hidden">
+  This action will permanently delete this domain and all of its records.<br><br>Are you sure?
+</div>
+[% IF flash.detail %]
+        <div id="detail_message" class="flash_detail display_hidden" Title="Details">[% flash.detail %]</div>
+[% END %]
+<input type="hidden" id="slave_count" value="0" />
+<script>
+	$(function() {
+		$('#nav_menu_domains').addClass('nav_menu_active');
+		$('input:submit, button').button();
+		$('img').tipTip({ delay: '800' });
+
+	[% IF flash.detail %]
+		var link = '<a id="detail_message_button" href="#">show details</a>';
+		$('#status_msg').append(link);
+		$('#error_msg').append(link);
+                $("#detail_message").dialog({
+			autoOpen: false,
+			autoResize: true,
+			width: 450,
+                        modal: true
+                 });
+                 $("#detail_message_button").click(function(e){
+                        e.preventDefault();
+                        $("#detail_message").dialog("open");
+                 });
+	[% END %]
+
+		$('#add_domain_form').validate({ 
+                	rules: { 
+                  		add_domain_name: 'required', 
+                	}, 
+              	}); 
+
+                $("#confirm_action").dialog({
+                        autoOpen: false,
+                        modal: true
+                });
+
+        	$(".confirm_link").click(function(e) {
+                	e.preventDefault();
+			$('.flash').fadeOut();
+                	var targetUrl = $(this).attr("href");
+
+        	$("#confirm_action").dialog({
+                	buttons : {
+                		"Confirm" : function() {
+                        		window.location.href = targetUrl;
+                		},
+                		"Cancel" : function() {
+                        		$(this).dialog("close");
+                		}
+                	}
+        	});
+
+        		$("#confirm_action").dialog("open");
+		});
+
+		$('.display_add_button').click(function(e){
+			e.preventDefault();
+                        $('.flash').fadeOut();
+			$('#display_add_block').fadeToggle();	
+		});
+
+                $('#display_add_bulk_button').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_bulk_block').fadeToggle();   
+                });
+
+                $('.display_add_hide').click(function(e){
+			e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_block').fadeOut();
+                });
+
+                $('.display_add_bulk_hide').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_bulk_block').fadeOut();
+                });
+
+                $('#display_add_toggle').click(function(e){
+			e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add').fadeToggle();       
+                });
+
+                $('#display_add_bulk_toggle').click(function(e){
+                        e.preventDefault();
+                        $('.flash').fadeOut();
+                        $('#display_add_bulk').fadeToggle();       
+                });
+
+		$('#edit_domains_toggle').click(function(e){
+			e.preventDefault();
+                        $('.flash').fadeOut();
+			$('#display_edit').fadeToggle();
+		});
+
+                $('#display_domains_toggle').click(function(e){
+                        	e.preventDefault();
+				$('.flash').fadeOut();
+                        	$('#display_domains').fadeToggle();
+		});
+
+
+		$('#add_domain_type').change(function() {
+                                var value = $(this).val();
+
+                                if ( value == 'SLAVE' )
+                                {
+                                        $('#add_master_addr_display').fadeIn();
+                                }
+                                else
+                                {
+                                        $('#add_master_addr_display').hide();
+                                }
+               });
+
+                $('#add_bulk_domain_type').change(function() {
+                                var value = $(this).val();
+
+                                if ( value == 'SLAVE' )
+                                {
+                                        $('#add_bulk_master_addr_display').fadeIn();
+                                }
+                                else
+                                {
+                                        $('#add_bulk_master_addr_display').hide();
+                                }
+               });
+	
+                        $('.edit_domain_button').click(function(e){
+                                e.preventDefault();
+				$('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('edit'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/domains/get',
+                                        dataType: 'json',
+                                        data: record,
+                                        cache: false,
+
+		  			statusCode: {
+
+    						404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+						},
+						500: function() {
+						        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+    						}
+    					},
+
+					error: function() {
+ 	                                                $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+  					},
+
+                                        success: function(json){
+						var id = json.id;
+						var stat = json.stat;
+						var message = json.message;
+                                                var name = json.name;
+						var type = json.type;
+						var master = json.master;
+
+						if ( stat == 'ok' )
+						{
+							$('#domain_' + id).hide();
+							$('#type_' + id).hide();
+							$('input[id=edit_name_' + id + ']').val(name);
+							$('select[id=edit_type_' + id + ']').val(type);
+                               				$('input[id=master_addr_' + id + ']').val(master);
+							var tmptype = $('#edit_type_' + id).val();
+ 
+							if ( type == 'SLAVE' || tmptype == 'SLAVE')
+                                			{
+							        var count = $('#slave_count').val();
+                                				count++; 
+                                        			$('input[id=slave_count]').val(count);
+
+                                        			$('.table_formatter_domains').width('320px');
+                                        			$('.td_formatter_type').width('320px');
+                                        			$('.table_formatter_type').width('320px');
+								$('#display_master_' + id).fadeIn();
+                                			}
+
+							$('#edit_name_' + id).fadeIn();
+							$('#edit_type_' + id).fadeIn();
+							$('#edit_domain_' + id).hide();
+							$('#delete_domain_' + id).hide();
+							$('#save_domain_' + id).fadeIn();
+							$('#cancel_domain_' + id).fadeIn();
+						}
+						else
+						{
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+						}
+                                        }
+                                });
+                        });
+
+			$('.edit_type').change(function() {
+				var id = $(this).attr('edit');
+				var value = $(this).val();
+
+				if ( value == 'SLAVE' )
+				{
+					var count = $('#slave_count').val();
+					count++;
+					$('input[id=slave_count]').val(count);
+					$('.table_formatter_domains').width('320px');
+					$('.td_formatter_type').width('320px');
+					$('.table_formatter_type').width('320px');
+					$('#display_master_' + id).fadeIn();
+				}
+				else
+				{
+					var count = $('#slave_count').val();
+					count--;
+					$('input[id=slave_count]').val(count);
+					$('#display_master_' + id).hide();
+
+					if (count == 0)
+					{
+                                        	$('.table_formatter_domains').width('540px');
+                                        	$('.td_formatter_type').width('100px');
+                                        	$('.table_formatter_type').width('100px');
+					}
+				}
+			});
+
+                       $('.save_domain_button').click(function(e){
+                                e.preventDefault();
+                                $('.flash').fadeOut();
+
+				var id =  $(this).attr('save');
+
+                                var record = {
+                                                id: $(this).attr('save'),
+						name: $('#edit_name_' + id).val(),
+						type: $('#edit_type_' + id).val(),
+						master: $('#master_addr_' + id).val(),
+                                        };
+                                $.ajax({
+                                        type: 'POST',
+                                        url: '[% request.uri_base %]/domains/update',
+                                        dataType: "json",
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var message = json.message;
+                                                var name = json.name;
+                                                var type = json.type;
+						var master = json.master;
+
+                                                if ( stat == 'ok' )
+                                                {
+                                                        var count = $('#slave_count').val();
+                                                        count--;
+                                                        $('input[id=slave_count]').val(count);
+                                                        $('#display_master_' + id).hide();
+                        
+                                                        if (count == 0)
+                                                        {
+                                                                $('.table_formatter_domains').width('540px');
+                                                                $('.td_formatter_type').width('100px');
+                                                                $('.table_formatter_type').width('100px');
+                                                        }
+
+                                                        $('#edit_name_' + id).hide();
+                                                        $('#edit_type_' + id).hide();
+                                                        $('#domain_' + id).text(name);
+                                                        $('#type_' + id).text(type);
+                                                        $('#domain_' + id).fadeIn();
+                                                        $('#type_' + id).fadeIn();
+                                                        $('#save_domain_' + id).hide();
+                                                        $('#cancel_domain_' + id).hide();
+                                                        $('#edit_domain_' + id).fadeIn();
+                                                        $('#delete_domain_' + id).fadeIn();
+							$('#status_msg_txt_ajax').text(message);
+							$('#status_msg_ajax').fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+                        });
+
+			$('.cancel_domain_button').click(function(e){
+				e.preventDefault();
+				$('.flash').fadeOut();
+
+                                var record = {
+                                                id: $(this).attr('cancel'),
+                                        };
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '[% request.uri_base %]/domains/get',
+                                        dataType: "json",
+                                        data: record,
+                                        cache: false,
+
+                                        statusCode: {
+
+                                                404: function() {
+                                                        $('#error_msg_txt_ajax').text('Could not contact server');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                },
+                                                500: function() {
+                                                        $('#error_msg_txt_ajax').text('A server-side error has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        },
+
+                                        error: function() {
+                                                        $('#error_msg_txt_ajax').text('A problem has occurred');
+                                                        $('#error_msg_ajax').fadeIn();
+                                        },
+
+                                        success: function(json){
+                                                var id = json.id;
+                                                var stat = json.stat;
+                                                var message = json.message;
+                                                var name = json.name;
+                                                var type = json.type;
+
+                                                if ( stat == 'ok' )
+                                                {
+						        var count = $('#slave_count').val();
+							var tmptype = $('#edit_type_' + id).val();
+	
+							if (type == 'SLAVE' || tmptype == 'SLAVE' )
+							{
+                                        			count--;
+								$('input[id=slave_count]').val(count);
+							}
+
+							$('#display_master_' + id).hide();
+			
+							if (count == 0)
+							{
+                                        			$('.table_formatter_domains').width('540px');
+                                        			$('.td_formatter_type').width('100px');
+                                        			$('.table_formatter_type').width('100px');
+							}
+
+                                                        $('#edit_name_' + id).hide();
+                                                        $('#edit_type_' + id).hide();
+							$('#domain_' + id).text(name);
+							$('#type_' + id).text(type);
+							$('#domain_' + id).fadeIn();
+							$('#type_' + id).fadeIn();
+                                                        $('#save_domain_' + id).hide();
+                                                        $('#cancel_domain_' + id).hide();
+                                                        $('#edit_domain_' + id).fadeIn();
+                                                        $('#delete_domain_' + id).fadeIn();
+                                                }
+                                                else
+                                                {
+                                                        $('#error_msg_txt_ajax').text(message);
+                                                        $('#error_msg_ajax').fadeIn();
+                                                }
+                                        }
+                                });
+			});
+	});
+</script>
+
