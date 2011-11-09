@@ -16,7 +16,7 @@ Feedback and suggestions welcome.
 
 =item *
 
-Simple and clean HTML5 interface
+Clean and simple HTML5 JSON web interface
 
 =item *
 
@@ -48,11 +48,11 @@ Supported DNS records A, AAAA, CNAME, LOC, MX, NS, PTR, SPF, SRV, TXT
 
 =item *
 
-Secure forgotten password recovery (enable or disable)
+Secure forgotten password recovery (enable OR disable)
 
 =item *
 
-Secure signup (fully automated or admin approved or disabled)
+Secure signup (fully automated OR admin approved OR disabled)
 
 =item *
 
