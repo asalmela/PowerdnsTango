@@ -3,6 +3,7 @@ use Dancer ':syntax';
 use Dancer::Plugin::Database;
 use Dancer::Plugin::FlashMessage;
 use Dancer::Session::Storable;
+use Dancer::Template::TemplateToolkit;
 use Dancer::Plugin::Ajax;
 use Data::Page;
 

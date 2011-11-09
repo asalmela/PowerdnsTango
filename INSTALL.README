@@ -20,15 +20,21 @@ http://doc.powerdns.com/configuring-db-connection.html for more information.
 
 1) Ensure you have the following perl modules installed on your system 
 
-These modules can be installed via cpan or perhaps from your linux distribution. 
+These modules can be installed via CPAN or perhaps from your linux distribution. 
+For more information on how to install via CPAN SEE:
+http://www.cpan.org/misc/cpan-faq.html#How_install_Perl_modules
 
 
+YAML
+Test::More
+JSON
 Dancer
 Dancer::Plugin::Database
 Dancer::Plugin::FlashMessage
 Dancer::Plugin::Ajax
 Dancer::Plugin::Email
 Dancer::Session::Storable
+Dancer::Template::TemplateToolkit
 Crypt::SaltedHash
 Data::Page
 Date::Calc
@@ -36,7 +42,6 @@ Data::Validate::Domain
 Data::Validate::IP
 Email::Valid
 MIME::Base64::URLSafe
-Template::Toolkit
 
 
 
@@ -55,7 +60,8 @@ For a mysql backend SEE: INSTALL.MYSQL
 3) Create a encrypted password for your admin account 
 
 Within the root directory of Powerdns Tango there is a script called "password.pl". 
-Run this script to generate a encrypted password for your first admin account. 
+Run this script to generate a encrypted password for your first admin account.
+You'll need this encrypted password in step (4). 
 The password can be easily changed later within the web interface. 
 
 
@@ -104,7 +110,7 @@ DATABASE SETTINGS EXAMPLE:
 
  driver: 'YOUR-DATABASE-TYPE'  			#options: mysql or Pg
     database: 'YOUR-DATABASE-NAME'
-    host: 'LOCATION-OF-DATABASE' 		#hostname or ip address
+    host: 'LOCATION-OF-DATABASE' 		#hostname or ip address or localhost
     port: DATABASE-PORT 			#defaults: mysql: 3306 or postgres: 5432
     username: 'YOUR-DATABASE-USERNAME'		
     password: 'YOUR-DATABASE-PASSWORD'		
