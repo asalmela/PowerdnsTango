@@ -7,8 +7,7 @@
 	<meta name="keywords" content="powerdns, powerdns frontend, pdns frontend, dns, webapp, frontend, front-end, perl, sysadmin, system administration, system administrations, administration, domain, nameserver, spf, txt, cname, dns records" />
 	<meta name="author" content="Sarah Fuller - sarah@averna.id.au" />
 	<meta name="robots" content="index,follow" />
-        <link type="text/css" href="[% request.uri_base %]/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
-        <link type="text/css" href="[% request.uri_base %]/css/main.css" rel="stylesheet" />
+        <link type="text/css" href="[% request.uri_base %]/css/main.prod.css" rel="stylesheet" />
 	<!--[if lte IE 7]>
 		<style>
 			#nav_menu_bg { margin-left: -324px; margin-top: 60px; }
