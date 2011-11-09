@@ -21,17 +21,17 @@ plugins:
     token_name: flash
     session_hash_key: _flash
   Email:
-    from: 'noreply@averna.id.au'
-    subject: 'Powerdns Tango'
-    driver: smtp
-    host: localhost
-  Database:
-    driver: 'mysql'
-    database: 'pdns_tango'
-    host: 'localhost'
-    port: 3306
-    username: 'tango'
-    password: 'testing123'
+    from: 'YOUR-FORM-EMAIL-ADDRESS' 	#the from address of all email sent out by Powerdns Tango
+    subject: 'Powerdns Tango' 		#default subject line of all email sent out by Powerdns Tango
+    driver: smtp			#default mail driver. see Dancer::Plugin::Email for more options
+    host: localhost			#default location of smtp server. See Dancer::Plugin::Email for more options
+  Database:				#
+    driver: 'YOUR-DATABASE-TYPE'	#options mysql or Pg
+    database: 'YOUR-DATABASE-NAME'	# 
+    host: 'LOCATION-OF-DATABASE'	#hostname or ip address
+    port: DATABASE-PORT			#defaults: mysql: 3306 or postgres: 5432
+    username: 'YOUR-DATABASE-USERNAME'	#
+    password: 'YOUR-DATABASE-PASSWORD'	#
     connection_check_threshold: 10
     dbi_params:
     RaiseError: 1
