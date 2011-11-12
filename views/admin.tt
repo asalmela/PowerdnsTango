@@ -399,7 +399,9 @@
                                 <td>
                                         <div class="table_formatter table_formatter_links ui-corner-all [% colour %]">
                                                 <a href="#"><img id="edit_user_[% users.$id.id %]" class="edit_user_button" edit="[% users.$id.id %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
+				[% IF session.user_id !=  users.$id.id %]
                                                 <a href="/admin/delete/user/id/[% users.$id.id %]" class="confirm_link"><img id="delete_user_[% users.$id.id %]" delete="[% users.$id.id %]" src="/images/icons/database_delete.png" class="center" alt="Delete" title="Delete" /></a>
+				[% END %]
                                                 <a href="#"><img id="save_user_[% users.$id.id %]" class="save_user_button display_hidden" save="[% users.$id.id %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
                                                 <a href="#"><img id="cancel_user_[% users.$id.id %]" class="cancel_user_button display_hidden" cancel="[% users.$id.id %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
                                         </div>

@@ -9,6 +9,7 @@ use Dancer::Plugin::Email;
 use Crypt::SaltedHash;
 use Data::Page;
 use Email::Valid;
+use Data::Validate::Domain qw(is_domain);
 
 our $VERSION = '0.1';
 
@@ -27,6 +28,52 @@ sub user_acl
         {
                 return 1;
         }
+};
+
+
+sub check_soa
+{
+        my ($name_server, $contact, $refresh, $retry, $expire, $minimum, $ttl) = @_;
+        my $stat = 1;
+        my $message = "ok";
+
+
+        if (!defined $name_server || ! is_domain($name_server))
+        {
+                $message = "Default SOA update failed, a name server must be a valid domain";
+        }
+        elsif (!defined $contact || (! Email::Valid->address($contact)))
+        {
+                $message = "Default SOA update failed, $contact is not a valid email address";
+        }
+        elsif (!defined $refresh || $refresh !~ m/^(\d)+$/ || $refresh < 1200)
+        {
+                $message = "Default SOA update failed, refresh must be a number equal or greater than 1200";
+        }
+        elsif (!defined $retry || $retry !~ m/^(\d)+$/ || $retry < 180)
+        {
+                $message = "Default SOA update failed, retry must be a number equal or greater than 180";
+        }
+        elsif (!defined $expire || $expire !~ m/^(\d)+$/ || $expire < 180)
+        {
+                $message = "Default SOA update failed, expire must be a number equal or greater than 180";
+        }
+        elsif (!defined $minimum || $minimum !~ m/^(\d)+$/ || $minimum < 3600 || $minimum >= 10800)
+        {
+                $message = "Default SOA update failed, minimum must be a number between 3600 and 10800";
+        }
+        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < 3600)
+        {
+                $message = "Default SOA update failed, ttl must be a number greater than 3600";
+        }
+        else
+        {
+                $stat = 0;
+        }
+
+
+
+        return ($stat, $message);
 };
 
 
@@ -185,7 +232,8 @@ post '/admin/add/user' => sub
 get '/admin/delete/user/id/:id' => sub
 {
 	my $perm = user_acl;
-	my $user_id  = params->{id} || 0;
+	my $del_user_id  = params->{id} || 0;
+	my $user_id = session 'user_id';
 
 
         if ($perm == 1)
@@ -194,14 +242,18 @@ get '/admin/delete/user/id/:id' => sub
         }
 
 
-	if ($user_id != 0)
+	if ($del_user_id != 0 && $del_user_id != $user_id)
 	{
-		database->quick_delete('domains_acl_tango', { user_id => $user_id });
-		database->quick_delete('templates_acl_tango', { user_id => $user_id });
-		database->quick_delete('signup_activation_tango', { user_id => $user_id });
-		database->quick_delete('users_tango', { id => $user_id });
+		database->quick_delete('domains_acl_tango', { user_id => $del_user_id });
+		database->quick_delete('templates_acl_tango', { user_id => $del_user_id });
+		database->quick_delete('signup_activation_tango', { user_id => $del_user_id });
+		database->quick_delete('users_tango', { id => $del_user_id });
 
 		flash message => "Account deleted";
+	}
+	elsif ($del_user_id == $user_id)
+	{
+		flash error => "Account delete failed, can't delete yourself";
 	}
 	else
 	{
@@ -250,34 +302,14 @@ ajax '/admin/save/soa' => sub
         }
 
 
-	if (!defined $name_server || $name_server !~ m/(\w)+/)
+	my ($stat, $message) = check_soa($name_server, $contact, $refresh, $retry, $expire, $minimum, $ttl);
+
+	
+	if ($stat == 1)
 	{
-		return { stat => 'fail', message => "Default SOA update failed, a name server must be entered" };
+		return { stat => 'fail', message => $message };
 	}
-	elsif (!defined $contact || (! Email::Valid->address($contact)))
-	{
-		return { stat => 'fail', message => "Default SOA update failed, $contact is not a valid email address" };
-	}
-	elsif (!defined $refresh || $refresh !~ m/^(\d)+$/)
-	{
-		return { stat => 'fail', message => "Default SOA update failed, refresh must be a number" };
-	}
-        elsif (!defined $retry || $retry !~ m/^(\d)+$/)
-        {
-                return { stat => 'fail', message => "Default SOA update failed, retry must be a number" };
-        }
-        elsif (!defined $expire || $expire !~ m/^(\d)+$/)
-        {
-                return { stat => 'fail', message => "Default SOA update failed, expire must be a number" };
-        }
-        elsif (!defined $minimum || $minimum !~ m/^(\d)+$/)
-        {
-                return { stat => 'fail', message => "Default SOA update failed, minimum must be a number" };
-        }
-        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/)
-        {
-                return { stat => 'fail', message => "Default SOA update failed, ttl must be a number" };
-        }
+
 
 
         database->quick_delete('admin_default_soa_tango', {});

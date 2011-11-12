@@ -670,7 +670,7 @@ div.table_formatter_color2 { background: #ffffff; }
 div.table_formatter_domains { width: 540px; overflow: hidden; }
 div.table_formatter_templates { width: 664px; overflow: hidden; }
 div.table_formatter_type { width: 100px; overflow: hidden; text-align: center; }
-div.table_formatter_links { text-align: right; width: 36px; }
+div.table_formatter_links { text-align: right; width: 36px; text-align: left; }
 div.table_formatter_label { overflow: hidden; width: 147px; }
 div.table_formatter_soa { overflow: hidden; width: 553px; }
 div.table_formatter_domain_info { overflow: hidden; width: 553px; }

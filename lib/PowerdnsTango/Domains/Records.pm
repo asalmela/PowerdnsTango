@@ -7,9 +7,9 @@ use Dancer::Template::TemplateToolkit;
 use Dancer::Plugin::Ajax;
 use Data::Validate::Domain qw(is_domain);
 use Data::Validate::IP qw(is_ipv4 is_ipv6);
+use Email::Valid;
 use Date::Calc qw(:all);
 use Data::Page;
-use Email::Valid;
 
 our $VERSION = '0.1';
 
@@ -35,6 +35,131 @@ sub user_acl
         {
         	return 0;
         }
+};
+
+
+sub check_soa
+{
+        my ($name_server, $contact, $refresh, $retry, $expire, $minimum, $ttl) = @_;
+        my $stat = 1;
+        my $message = "ok";
+
+
+        if (!defined $name_server || ! is_domain($name_server))
+        {
+                $message = "SOA update failed, a name server must be a valid domain";
+        }
+        elsif (!defined $contact || (! Email::Valid->address($contact)))
+        {
+                $message = "SOA update failed, $contact is not a valid email address";
+        }
+        elsif (!defined $refresh || $refresh !~ m/^(\d)+$/ || $refresh < 1200)
+        {
+                $message = "SOA update failed, refresh must be a number equal or greater than 1200";
+        }
+        elsif (!defined $retry || $retry !~ m/^(\d)+$/ || $retry < 180)
+        {
+                $message = "SOA update failed, retry must be a number equal or greater than 180";
+        }
+        elsif (!defined $expire || $expire !~ m/^(\d)+$/ || $expire < 180)
+        {
+                $message = "SOA update failed, expire must be a number equal or greater than 180";
+        }
+        elsif (!defined $minimum || $minimum !~ m/^(\d)+$/ || $minimum < 3600 || $minimum >= 10800)
+        {
+                $message = "SOA update failed, minimum must be a number between 3600 and 10800";
+        }
+        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < 3600)
+        {
+                $message = "SOA update failed, ttl must be a number equal or greater than 3600";
+        }
+        else
+        {
+                $stat = 0;
+        }
+
+
+
+        return ($stat, $message);
+};
+
+
+sub check_record
+{
+        my ($name, $ttl, $type, $content, $prio) = @_;
+        my $stat = 1;
+        my $message = "ok";
+	my $sth;
+	my $count;
+
+
+	if (!defined || ! is_domain($name))
+	{
+		$message = "Name is invalid";
+	}
+        elsif (!defined $content)
+        {
+                $message = "Content must have a value";
+        }
+        elsif (!defined $type)
+        {
+                $message = "Type must have a value";
+        }
+        elsif ($type ne 'A' && $type ne 'AAAA' && $type ne 'CNAME' && $type ne 'LOC' && $type ne 'MX' && $type ne 'NS' && $type ne 'PTR' && $type ne 'SPF' && $type ne 'SRV' && $type ne 'TXT')
+        {
+                $message = "Type is unknown";
+        }
+        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < 3600)
+        {
+                $message = "TTL must be a number equal or greater than 3600";
+        }
+        elsif ($type eq 'A' && ! is_ipv4($content))
+        {
+                $message = "A record must be a valid ipv4 address";
+        }
+        elsif ($type eq 'AAAA' && ! is_ipv6($content))
+        {
+                $message = "AAAA record must be a valid ipv6 address";
+        }
+        elsif ($type eq 'CNAME' && ! is_domain($content))
+        {
+                $message = "CNAME record must be unique and contain a valid domain name";
+        }
+        elsif ($type eq 'LOC' && $content !~ m/(\w)+/)
+        {
+                $message = "LOC record must contain a geographical location";
+        }
+        elsif ($type eq 'MX' && (!defined $prio || $prio !~ m/^(\d)+$/ || $prio < 1 || $prio >= 65535 || ! is_domain($content)))
+        {
+                $message = "MX record must have a priority number and contain a valid domain name";
+        }
+        elsif ($type eq 'NS' && ! is_domain($content))
+        {
+                $message = "NS record must contain a valid domain name";
+        }
+        elsif ($type eq 'PTR' && (! is_ipv4($content) && ! is_ipv6($content)))
+        {
+                $message = "PTR record must be a valid ip address";
+        }
+        elsif ($type eq 'SPF' && $content !~ m/(\w)+/)
+        {
+                $message = "SPF record must contain alphanumeric characters";
+        }
+        elsif ($type eq 'SRV' && (!defined $prio || $prio !~ m/^(\d)+$/ || $prio < 1 || $prio >= 65535 || $content !~ m/(\w)+/))
+        {
+                $message = "SRV record must have a priority number and contain a alphanumeric characters";
+        }
+        elsif ($type eq 'TXT' && $content !~ m/(\w)+/)
+        {
+                $message = "TXT record must contain a alphanumeric characters";
+        }
+        else
+        {
+                $stat = 0;
+        }
+
+
+        return ($stat, $message);
 };
 
 
@@ -160,7 +285,7 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub
 
         template 'records', { domain_id => $domain_id, domain_name => $domain->{name}, domain_type => $domain->{type}, domain_master => $domain->{master}, records => $sth->fetchall_hashref('id'), 
 	templates => $templates->fetchall_hashref('id'), page => $load_page, results => $results_per_page,  previouspage => ($load_page - 1), nextpage => ($load_page + 1),
-	lastpage => $page->last_page, soa_id => $soa->{id}, name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, 
+	lastpage => $page->last_page, soa_id => $soa->{id}, name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $soa->{ttl},
 	users => $users->fetchall_hashref('id'), domain_owner_id => $owner_id, domain_owner_login => $owner_login };
 };
 
@@ -298,6 +423,30 @@ post '/domains/edit/records/id/:id/add' => sub
 
 
 	$name =~ s/\.\./\./gi;
+
+
+        my ($stat, $message) = check_record($name, $ttl, $type, $content, $prio);
+
+
+        if ($stat == 1)
+        {
+                flash error => "Add record failed, $message";
+
+                return redirect "/domains/edit/records/id/$domain_id";
+        }
+
+
+	my $sth = database->prepare("select count(id) as count from records where domain_id = ? and type = ? and name = ?");
+        $sth->execute($domain_id, 'CNAME', $name);
+	my $count = $sth->fetchrow_hashref;
+
+
+	if ($type eq 'CNAME' && ($name eq $domain->{name} || $count->{count} != 0))
+	{
+		flash error => "Add record failed, CNAME record must be unique and contain a valid domain name";
+
+		return redirect "/domains/edit/records/id/$domain_id";
+	}
 
 
         for (my $i = 1; $domain_old_serial >= $domain_serial; $i++)
@@ -443,6 +592,7 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 	my $domain_id = params->{id} || 0;
 	my $find = params->{find_search};
 	my $find_in = params->{find_in};
+	my $find_type = params->{find_type};
 	my $replace = params->{find_replace};
 	my ($year,$month,$day) = Today();
 	my $perm = user_acl($domain_id);
@@ -465,11 +615,19 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 	}
 
 
+	if (! defined $find || ! defined $replace || ! defined $find_in || ! defined $find_type)
+	{
+		flash error => "Failed to update records, ensure all fields are complete";
+
+		return redirect "/domains/edit/records/id/$domain_id";
+	}
+
+
 	if ($find_in eq 'ttl')
 	{
-		if ($replace !~ m/^(\d)+$/)
+		if ($replace !~ m/^(\d)+$/ || $replace < 3600)
 		{
-                        flash error => "Failed to update records, TTL must be a number";
+                        flash error => "Failed to update records, TTL must be a number equal or greater than 3600";
 
 
                         return redirect "/domains/edit/records/id/$domain_id";
@@ -477,24 +635,25 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 	}
 	elsif ($find_in eq 'prio')
 	{
-		if ($replace !~ m/^(\d)+$/)
+		if ($replace !~ m/^(\d)+$/ || $replace < 1 || $replace >= 65535)
 		{
                         flash error => "Failed to update records, Priority must be a number";
 
 
                         return redirect "/domains/edit/records/id/$domain_id";
 		}
-		
 	}
 	elsif ($find_in eq 'content')
 	{
-		if ($replace !~ m/(\w)+/)
-		{
-                        flash error => "Failed to update records, Content must be alphanumeric characters";
+        	my ($stat, $message) = check_record('null.com', '3600', $find_type, $replace);
 
 
-                        return redirect "/domains/edit/records/id/$domain_id";
-		}
+        	if ($stat == 1)
+        	{
+			flash error => "Failed to update records, Content must match record type";
+
+			return redirect "/domains/edit/records/id/$domain_id";
+        	}
 	}
 
 
@@ -549,7 +708,7 @@ ajax '/domains/edit/records/get/soa' => sub
         $minimum = '' if (! defined $minimum);
 
 
-	return { stat => 'ok', name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum };
+	return { stat => 'ok', name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $soa->{ttl} };
 };
 
 
@@ -564,8 +723,7 @@ ajax '/domains/edit/records/update/soa' => sub
 	my $retry = params->{retry};
 	my $expire = params->{expire};
 	my $minimum = params->{minimum};
-	my $stat = 'fail';
-	my $message = 'unknown';
+	my $ttl = params->{ttl} || 3600;
 	my ($year,$month,$day) = Today();
         my $sth = database->prepare('select count(id) as count from records where domain_id = ? and type = ?');
         $sth->execute($domain_id, 'SOA');
@@ -586,30 +744,14 @@ ajax '/domains/edit/records/update/soa' => sub
 	}
 
 
-        if (!defined $name_server || $name_server !~ m/(\w)+/)
+	my ($stat, $message) = check_soa($name_server, $contact, $refresh, $retry, $expire, $minimum, $ttl);
+
+
+        if ($stat == 1)
         {
-                return { stat => 'fail', message => "SOA update failed, a name server must be entered" };
+                return { stat => 'fail', message => $message };
         }
-        elsif (!defined $contact || (! Email::Valid->address($contact)))
-        {
-                return { stat => 'fail', message => "SOA update failed, $contact is not a valid email address" };
-        }
-        elsif (!defined $refresh || $refresh !~ m/^(\d)+$/)
-        {
-                return { stat => 'fail', message => "SOA update failed, refresh must be a number" };
-        }
-        elsif (!defined $retry || $retry !~ m/^(\d)+$/)
-        {
-                return { stat => 'fail', message => "SOA update failed, retry must be a number" };
-        }
-        elsif (!defined $expire || $expire !~ m/^(\d)+$/)
-        {
-                return { stat => 'fail', message => "SOA update failed, expire must be a number" };
-        }
-        elsif (!defined $minimum || $minimum !~ m/^(\d)+$/)
-        {
-                return { stat => 'fail', message => "SOA update failed, minimum must be a number" };
-        }
+
 
 
 	my $domain_old_serial = $domain_info->{notified_serial} || 0;
@@ -636,26 +778,25 @@ ajax '/domains/edit/records/update/soa' => sub
 	if ($count->{count} == 0 || $count->{count} > 1)
 	{
 		database->quick_delete('records', { domain_id => $domain_id, type => 'SOA' }) if ($count->{count} > 1);
-		database->quick_insert('records', { name => $domain, domain_id => $domain_id, type => 'SOA', ttl => '86400', content => "$name_server $contact $refresh $retry $expire $minimum", change_date => $record_change_date });
+		database->quick_insert('records', { name => $domain, domain_id => $domain_id, type => 'SOA', content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl, change_date => $record_change_date });
 		database->quick_update('domains', { id => $domain_id }, { notified_serial => $domain_serial });
-		$stat = 'ok';
-		$message = 'SOA Updated';
+
+
+		return { stat => 'ok', message => 'SOA Updated', name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $ttl };
 	}
 	elsif ($count->{count} == 1 && $id != 0)
 	{
-		database->quick_update('records', { id => $id, type => 'SOA' }, { content => "$name_server $contact $refresh $retry $expire $minimum", change_date => $record_change_date });
+		database->quick_update('records', { id => $id, type => 'SOA' }, { content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl, change_date => $record_change_date });
 		database->quick_update('domains', { id => $domain_id }, { notified_serial => $domain_serial });
-		$stat = 'ok';
-		$message = 'SOA Updated';
+
+
+		return { stat => 'ok', message => 'SOA Updated', name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $ttl };
 	}
 	else
 	{
-                $stat = 'fail';
-                $message = 'Failed to update SOA';
+		return { stat => 'fail', message => 'Failed to update SOA' };
 	}
 
-
-        return { stat => $stat, message => $message, name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum };
 };
 
 
@@ -690,8 +831,6 @@ ajax '/domains/edit/records/update/record' => sub
 	my $ttl = params->{ttl};
 	my $prio = params->{prio} || '';
 	my $content = params->{content};
-        my $stat = 'fail';
-        my $message = 'unknown';
 	my $domain_id = database->quick_select('records', { id => $id });
         my $perm = user_acl($domain_id->{domain_id});
 	my ($year,$month,$day) = Today();
@@ -726,6 +865,26 @@ ajax '/domains/edit/records/update/record' => sub
 
 
         $name =~ s/\.\./\./gi;
+
+
+        my ($stat, $message) = check_record($name, $ttl, $type, $content, $prio);
+
+
+        if ($stat == 1)
+        {
+                return { stat => 'fail', message => "Failed to update record, $message" };
+        }
+
+
+        my $sth = database->prepare("select count(id) as count from records where domain_id = ? and type = ? and name = ? and id != ?");
+        $sth->execute($domain_id->{domain_id}, 'CNAME', $name, $id);
+        my $count = $sth->fetchrow_hashref;
+
+
+        if ($type eq 'CNAME' && ($name eq $domain->{name} || $count->{count} != 0))
+        {
+		return { stat => 'fail', message => "Failed to update record, CNAME record must be unique and contain a valid domain name" };
+        }
 
 
         my $domain_old_serial = $domain->{notified_serial} || 0;
@@ -763,21 +922,16 @@ ajax '/domains/edit/records/update/record' => sub
 		}
 
 
-		$stat = 'ok';
-		$message = 'Record updated';
+        	$name =~ s/$domain->{name}//;
+        	$name =~ s/\.$//;
+
+
+		return { id => $id, stat => 'ok', message => 'Record updated', name => $name, type => $type, ttl => $ttl, prio => $prio, content => $content };
 	}
 	else
 	{
-		$stat = 'fail';
-		$message = 'Failed to update record';
+		return { stat => 'fail', message => 'Failed to update record' };
 	}
-
-
-        $name =~ s/$domain->{name}//;
-        $name =~ s/\.$//;
-
-
-	return { id => $id, stat => $stat, message => $message, name => $name, type => $type, ttl => $ttl, prio => $prio, content => $content };
 };
 
 
