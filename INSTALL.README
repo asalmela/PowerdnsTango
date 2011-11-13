@@ -92,6 +92,7 @@ insert into admin_settings_tango (setting, value) values ('password_recovery', '
 insert into admin_settings_tango (setting, value) values ('downtime', 'disabled');
 insert into admin_settings_tango (setting, value) values ('default_domain_limit', '10');
 insert into admin_settings_tango (setting, value) values ('default_template_limit', '10');
+insert into admin_settings_tango (setting, value) values ('default_ttl_minimum', '3600');
 insert into admin_settings_tango (setting, value) values ('announcement', 'MOTD');
 
 

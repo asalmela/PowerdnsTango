@@ -91,6 +91,8 @@ sub check_record
         my $message = "ok";
 	my $sth;
 	my $count;
+	my $default_ttl_minimum = database->quick_select('admin_settings_tango', { setting => 'default_ttl_minimum' });
+	$default_ttl_minimum->{value} = 3600 if (!defined $default_ttl_minimum->{value} || $default_ttl_minimum->{value} !~ m/^(\d)+$/);
 
 
 	if (!defined || ! is_domain($name))
@@ -109,9 +111,9 @@ sub check_record
         {
                 $message = "Type is unknown";
         }
-        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < 3600)
+        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < $default_ttl_minimum->{value})
         {
-                $message = "TTL must be a number equal or greater than 3600";
+                $message = "TTL must be a number equal or greater than $default_ttl_minimum->{value}";
         }
         elsif ($type eq 'A' && ! is_ipv4($content))
         {
@@ -597,6 +599,9 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 	my ($year,$month,$day) = Today();
 	my $perm = user_acl($domain_id);
 	my $domain = database->quick_select('domains', { id => $domain_id });
+        my $default_ttl_minimum = database->quick_select('admin_settings_tango', { setting => 'default_ttl_minimum' });
+        $default_ttl_minimum->{value} = 3600 if (!defined $default_ttl_minimum->{value} || $default_ttl_minimum->{value} !~ m/^(\d)+$/);
+
 
 
         if ($perm == 1)
@@ -625,9 +630,9 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 
 	if ($find_in eq 'ttl')
 	{
-		if ($replace !~ m/^(\d)+$/ || $replace < 3600)
+		if ($replace !~ m/^(\d)+$/ || $replace < $default_ttl_minimum->{value})
 		{
-                        flash error => "Failed to update records, TTL must be a number equal or greater than 3600";
+                        flash error => "Failed to update records, TTL must be a number equal or greater than $default_ttl_minimum->{value}";
 
 
                         return redirect "/domains/edit/records/id/$domain_id";
@@ -645,7 +650,7 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 	}
 	elsif ($find_in eq 'content')
 	{
-        	my ($stat, $message) = check_record('null.com', '3600', $find_type, $replace);
+        	my ($stat, $message) = check_record('null.com', "$default_ttl_minimum->{value}", $find_type, $replace);
 
 
         	if ($stat == 1)

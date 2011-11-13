@@ -143,15 +143,16 @@ any ['get', 'post'] => '/admin' => sub
 	my $downtime = database->quick_select('admin_settings_tango', { setting => 'downtime' });
 	my $default_domain_limit = database->quick_select('admin_settings_tango', { setting => 'default_domain_limit' });
 	my $default_template_limit = database->quick_select('admin_settings_tango', { setting => 'default_template_limit' });
+	my $default_ttl_minimum = database->quick_select('admin_settings_tango', { setting => 'default_ttl_minimum' });
 	my $motd = database->quick_select('admin_settings_tango', { setting => 'announcement' });
 	my $default_soa = database->quick_select('admin_default_soa_tango', {});
 
 
         template 'admin', { users => $sth->fetchall_hashref('id'), page => $load_page, results => $results_per_page, previouspage => ($load_page - 1), nextpage => ($load_page + 1), lastpage => $page->last_page, 
 	settings_signup => $account_signup->{value}, settings_recovery => $password_recovery->{value}, settings_downtime => $downtime->{value}, default_domain_limit => $default_domain_limit->{value}, 
-	default_template_limit => $default_template_limit->{value}, settings_motd => $motd->{value}, default_soa_name_server => $default_soa->{name_server}, default_soa_contact => $default_soa->{contact},
-	default_soa_refresh => $default_soa->{refresh}, default_soa_retry => $default_soa->{retry}, default_soa_expire => $default_soa->{expire}, default_soa_minimum => $default_soa->{minimum}, 
-	default_soa_ttl => $default_soa->{ttl} };
+	default_ttl_minimum => $default_ttl_minimum->{value}, default_template_limit => $default_template_limit->{value}, settings_motd => $motd->{value},
+	default_soa_name_server => $default_soa->{name_server}, default_soa_contact => $default_soa->{contact}, default_soa_refresh => $default_soa->{refresh}, 
+	default_soa_retry => $default_soa->{retry}, default_soa_expire => $default_soa->{expire}, default_soa_minimum => $default_soa->{minimum}, default_soa_ttl => $default_soa->{ttl} };
 };
 
 
@@ -428,11 +429,13 @@ ajax '/admin/get/settings' => sub
         my $downtime = database->quick_select('admin_settings_tango', { setting => 'downtime' });
 	my $default_domain_limit = database->quick_select('admin_settings_tango', { setting => 'default_domain_limit' });
 	my $default_template_limit = database->quick_select('admin_settings_tango', { setting => 'default_template_limit' });
+	my $default_ttl_minimum = database->quick_select('admin_settings_tango', { setting => 'default_ttl_minimum' });
 	my $motd = database->quick_select('admin_settings_tango', { setting => 'announcement' });
 
 
         return { stat => 'ok', account_signup => $account_signup->{value}, password_recovery => $password_recovery->{value}, downtime => $downtime->{value}, 
-	default_domain_limit => $default_domain_limit->{value}, default_template_limit => $default_template_limit->{value}, motd => $motd->{value} };
+	default_domain_limit => $default_domain_limit->{value}, default_template_limit => $default_template_limit->{value}, 
+	default_ttl_minimum => $default_ttl_minimum->{value}, motd => $motd->{value} };
 };
 
 
@@ -444,6 +447,7 @@ ajax '/admin/save/settings' => sub
 	my $downtime = params->{downtime};
 	my $default_domain_limit = params->{default_domain_limit};
 	my $default_template_limit = params->{default_template_limit};
+	my $default_ttl_minimum = params->{default_ttl_minimum};
 	my $motd = params->{motd};
 
 
@@ -457,14 +461,16 @@ ajax '/admin/save/settings' => sub
 	$password_recovery = 'enabled' if ($password_recovery ne 'enabled' && $password_recovery ne 'disabled');
 	$downtime = 'disabled' if ($downtime ne 'enabled' && $downtime ne 'disabled');
 
-	return { stat => 'fail', message => "Default domain limit must be a number" } if $default_domain_limit !~ m/^(\d)+$/;
-	return { stat => 'fail', message => "Default template limit must be a number" } if $default_template_limit !~ m/^(\d)+$/;	
+	return { stat => 'fail', message => "Default domain limit must be a number" } if (!defined $default_domain_limit || $default_domain_limit !~ m/^(\d)+$/);
+	return { stat => 'fail', message => "Default template limit must be a number" } if (!defined $default_template_limit || $default_template_limit !~ m/^(\d)+$/);
+	return { stat => 'fail', message => "Default TTL minimum must be a number equal or greater than 300" } if (!defined $default_ttl_minimum || $default_ttl_minimum !~ m/^(\d)+$/ || $default_ttl_minimum < 300);
 
         database->quick_delete('admin_settings_tango', { setting => 'account_signup' });
         database->quick_delete('admin_settings_tango', { setting => 'password_recovery' });
         database->quick_delete('admin_settings_tango', { setting => 'downtime' });
 	database->quick_delete('admin_settings_tango', { setting => 'default_domain_limit' });
 	database->quick_delete('admin_settings_tango', { setting => 'default_template_limit' });
+	database->quick_delete('admin_settings_tango', { setting => 'default_ttl_minimum' });
 	database->quick_delete('admin_settings_tango', { setting => 'announcement' });
 	
 	database->quick_insert('admin_settings_tango', { setting => 'account_signup', value => $account_signup });
@@ -472,11 +478,12 @@ ajax '/admin/save/settings' => sub
 	database->quick_insert('admin_settings_tango', { setting => 'downtime', value => $downtime });
 	database->quick_insert('admin_settings_tango', { setting => 'default_domain_limit', value => $default_domain_limit });
 	database->quick_insert('admin_settings_tango', { setting => 'default_template_limit', value => $default_template_limit });
+	database->quick_insert('admin_settings_tango', { setting => 'default_ttl_minimum', value => $default_ttl_minimum });
 	database->quick_insert('admin_settings_tango', { setting => 'announcement', value => $motd });
 
 
         return { stat => 'ok', message => "System settings updated", account_signup => $account_signup, password_recovery => $password_recovery, downtime => $downtime, 
-	default_domain_limit => $default_domain_limit, default_template_limit => $default_template_limit, motd => $motd };
+	default_domain_limit => $default_domain_limit, default_template_limit => $default_template_limit, default_ttl_minimum => $default_ttl_minimum, motd => $motd };
 };
 
 
