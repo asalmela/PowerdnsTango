@@ -1,14 +1,14 @@
 <script>$(function(){$('input:submit, button').button();$('img').tipTip();$('#login_form').validate({rules:{login:'required',password:'required',},})});</script>
 <span class="page_title">Login</span>
 [% IF account_signup == 'enabled' || account_signup == 'admin' %]
-	<span id="signup_link"><a href="[% request.uri_base %]/signup">Sign up now</a></span>
+	<span id="signup_link"><a href="/signup">Sign up now</a></span>
 [% END %]
 <div class="line_break"></div>
 <div class="content_break"></div>
 <!--[if lte IE 7]>
 <span id="ie_warning">This version of Internet Explorer is not supported. Please upgrade to Internet Explorer 8 or above.</span>
 <![endif]-->
-<form id="login_form" method="post" action="[% request.uri_base %]/login">
+<form id="login_form" method="post" action="/login">
    <ul class="form ui-corner-all">
          <li id="login">
                   <label>Username</label>
@@ -23,7 +23,7 @@
           </li>
 	[% IF recover_password == 1 %]
 	  <li>
-		<a href="[% request.uri_base %]/password/recover">Forgotten your password?</a>
+		<a href="/password/recover">Forgotten your password?</a>
 	  </li>
 	[% END %]
     </ul>

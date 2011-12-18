@@ -7,7 +7,7 @@
 	<meta name="keywords" content="powerdns, powerdns frontend, pdns frontend, dns, webapp, frontend, front-end, perl, sysadmin, system administration, system administrations, administration, domain, nameserver, spf, txt, cname, dns records" />
 	<meta name="author" content="Sarah Fuller - sarah@averna.id.au" />
 	<meta name="robots" content="index,follow" />
-        <link type="text/css" href="[% request.uri_base %]/css/main.prod.css" rel="stylesheet" />
+        <link type="text/css" href="/css/main.prod.css" rel="stylesheet" />
 	<!--[if lte IE 7]>
 		<style>
 			#nav_menu_bg { margin-left: -324px; margin-top: 60px; }
@@ -18,17 +18,17 @@
 			#signup_link { display: none; }
 		</style>
 	<![endif]-->
-        <script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery-ui-1.8.16.custom.min.js"></script>
-	<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.validate.js"></script>
-	<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.tipTip.minified.js"></script>
+        <script type="text/javascript" src="/javascripts/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="/javascripts/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="/javascripts/jquery.validate.js"></script>
+	<script type="text/javascript" src="/javascripts/jquery.tipTip.minified.js"></script>
  </head>
    <body>
      <!-- header -->
                 <div id="header" class="ui-corner-tl ui-corner-tr">Powerdns <span>Tango</span>
 		[% IF session.logged_in %]
                         <div id="menu">
-				<form method="post" action="[% request.uri_base %]/domains">
+				<form method="post" action="/domains">
 				<ul>
 				   <li class="ui-corner-bl ui-corner-br"><span>Domain&nbsp;<input type="text" name="domain_search" maxlength="256" class="ui-corner-all"/>&nbsp;<input type="submit" value="Search" /></span></li>
                                 </ul>

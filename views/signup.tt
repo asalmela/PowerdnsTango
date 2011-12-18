@@ -2,7 +2,7 @@
 <span class="page_title">Sign up</span>
 <div class="line_break"></div>
 <div class="content_break"></div>
-<form id="signup_form" method="post" action="[% request.uri_base %]/signup">
+<form id="signup_form" method="post" action="/signup">
                         <ul class="form ui-corner-all">
                                 <li>
                                         <label>Login</label>
