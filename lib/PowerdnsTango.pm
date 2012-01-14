@@ -16,6 +16,7 @@ use PowerdnsTango::Account;
 use PowerdnsTango::Admin;
 use PowerdnsTango::Admin::Account;
 use PowerdnsTango::Signup;
+use PowerdnsTango::Acl qw(user_acl);
  
 our $VERSION = '0.2';
 
@@ -24,9 +25,9 @@ before sub
 {
 	if (! session('logged_in') && (request->path_info !~ m{^/login} && request->path_info !~ m{^/password} && request->path_info !~ m{^/signup} ))
 	{
-        	var requested_path => request->path_info;
-        	request->path_info('/login');
-    	}
+		var requested_path => request->path_info;
+		request->path_info('/login');
+	}
 };
 
 
