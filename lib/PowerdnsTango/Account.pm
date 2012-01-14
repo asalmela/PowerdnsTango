@@ -7,32 +7,9 @@ use Dancer::Template::TemplateToolkit;
 use Dancer::Plugin::Ajax;
 use Crypt::SaltedHash;
 use Data::Validate::Domain qw(is_domain);
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
-
-
-sub user_acl
-{
-        my $domain_id = shift;
-        my $user_type = session 'user_type';
-        my $user_id = session 'user_id';
-
-        return 0 if ($user_type eq 'admin');
-
-        my $acl = database->prepare("select count(id) as count from domains_acl_tango where domain_id = ? and user_id = ?");
-        $acl->execute($domain_id, $user_id);
-        my $check_acl = $acl->fetchrow_hashref;
-
-
-        if ($check_acl->{count} == 0)
-        {
-                return 1;
-        }
-        else
-        {
-                return 0;
-        }
-};
+our $VERSION = '0.2';
 
 
 get '/account' => sub
@@ -90,13 +67,23 @@ ajax '/account/save/user' => sub
 	my $user = database->quick_select('users_tango', { id => $user_id });
         my $sth = database->prepare('select count(login) as count from users_tango where login = ?');
         $sth->execute($login);
-        my $check_login = $sth->fetchrow_hashref;
+	my $check_login = $sth->fetchrow_hashref;
+
+	$sth = database->prepare('select count(email) as count from users_tango where email = ?');
+	$sth->execute($email);
+	my $check_email = $sth->fetchrow_hashref;
 
 	
 	if ($check_login->{count} != 0 && $login ne $user->{login})
 	{
-		return { stat => 'fail', message => "Account update failed, username already exists" };
+		return { stat => 'fail', message => "Account update failed, username $login already exists" };
 	}
+
+
+        if ($check_email->{count} != 0 && $email ne $user->{email})
+        {
+                return { stat => 'fail', message => "Account update failed, email $email already exists" };
+        }
 
 
         if ($login =~ m/(\w)+/ && $name =~ m/(\w)+/ && (Email::Valid->address($email)))

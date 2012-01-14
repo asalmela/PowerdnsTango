@@ -6,32 +6,9 @@ use Dancer::Session::Storable;
 use Dancer::Template::TemplateToolkit;
 use Dancer::Plugin::Ajax;
 use Data::Page;
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
-
-
-sub user_acl
-{
-        my $template_id = shift;
-        my $user_type = session 'user_type';
-        my $user_id = session 'user_id';
-
-        return 0 if ($user_type eq 'admin');
-
-        my $acl = database->prepare("select count(id) as count from templates_acl_tango where template_id = ? and user_id = ?");
-        $acl->execute($template_id, $user_id);
-        my $check_acl = $acl->fetchrow_hashref;
-
-
-        if ($check_acl->{count} == 0)
-        {
-                return 1;
-        }
-        else
-        {
-                return 0;
-        }
-};
+our $VERSION = '0.2';
 
 
 any ['get', 'post'] => '/templates' => sub
@@ -198,7 +175,7 @@ get '/templates/delete/id/:id' => sub
         my $id = params->{id} || 0;
         my $user_type = session 'user_type';
         my $user_id = session 'user_id';
-        my $perm = user_acl($id);
+        my $perm = user_acl($id, 'template');
 
 
         if ($perm == 1)
@@ -229,7 +206,7 @@ get '/templates/delete/id/:id' => sub
 ajax '/templates/get' => sub
 {
         my $id = params->{id} || 0;
-	my $perm = user_acl($id);
+	my $perm = user_acl($id, 'template');
         my $sth = database->prepare('select name from templates_tango where id = ?');
         $sth->execute($id);
         my $domain = $sth->fetchrow_hashref;
@@ -249,7 +226,7 @@ ajax '/templates/update' => sub
 {
         my $id = params->{id} || 0;
         my $name = params->{name} || 0;
-        my $perm = user_acl($id);
+        my $perm = user_acl($id, 'template');
 
 
         if ($perm == 1)

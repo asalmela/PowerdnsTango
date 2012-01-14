@@ -17,7 +17,7 @@ use PowerdnsTango::Admin;
 use PowerdnsTango::Admin::Account;
 use PowerdnsTango::Signup;
  
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 
 before sub
@@ -33,8 +33,8 @@ before sub
 any ['get', 'post'] => '/login' => sub
 {
 	my $recover_password = 0;
-	my $account_signup = database->quick_select('admin_settings_tango', { setting => 'account_signup' });
-	my $account_password_recovery = database->quick_select('admin_settings_tango', { setting => 'password_recovery' });
+	my $account_signup = database->quick_select('admin_settings_tango', { setting => 'account_signup' }) || 'disabled';
+	my $account_password_recovery = database->quick_select('admin_settings_tango', { setting => 'password_recovery' }) || 'disabled';
 
 
         if ( request->method() eq "POST" )
@@ -46,9 +46,10 @@ any ['get', 'post'] => '/login' => sub
 
 		if (!defined $data->{count} || $data->{count} != 1)
 		{
-			$recover_password = 1 if ($account_password_recovery->{value} eq 'enabled');
+			$recover_password = 1 if ($account_password_recovery->{value} eq 'enabled') || 0;
 
                         flash error => 'Login has failed';
+			
 		}
 		else
 		{

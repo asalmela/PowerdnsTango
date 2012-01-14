@@ -9,8 +9,9 @@ use Crypt::SaltedHash;
 use MIME::Base64::URLSafe;
 use Date::Calc qw(:all);
 use Email::Valid;
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 
 any ['get', 'post'] => '/signup' => sub
@@ -39,10 +40,18 @@ any ['get', 'post'] => '/signup' => sub
                 	$sth->execute($login);
                 	my $check_login = $sth->fetchrow_hashref;
 
+			$sth = database->prepare('select count(email) as count from users_tango where email = ?');
+			$sth->execute($email);
+			my $check_email = $sth->fetchrow_hashref;
+
 
 			if ($check_login->{count} != 0)
 			{
-				flash error => "Signup failed, login already exists";
+				flash error => "Signup failed, account with login $login already exists";
+			}
+			elsif ($check_email->{count} != 0)
+			{
+				flash error => "Signup failed, account with email $email already exists";
 			}
 	        	elsif ($password1 ne $password2)
                 	{

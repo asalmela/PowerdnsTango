@@ -9,32 +9,9 @@ use Data::Validate::Domain qw(is_domain);
 use Data::Validate::IP qw(is_ipv4 is_ipv6);
 use Email::Valid;
 use Data::Page;
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
-
-
-sub user_acl
-{
-	my $template_id = shift;
-        my $user_type = session 'user_type';
-        my $user_id = session 'user_id';
-
-	return 0 if ($user_type eq 'admin');
-
-        my $acl = database->prepare("select count(id) as count from templates_acl_tango where template_id = ? and user_id = ?");
-        $acl->execute($template_id, $user_id);
-        my $check_acl = $acl->fetchrow_hashref;
-
-
-        if ($check_acl->{count} == 0)
-        {
-        	return 1;
-        }
-	else
-	{
-		return 0;
-	}
-};
+our $VERSION = '0.2';
 
 
 sub check_soa
@@ -169,7 +146,7 @@ any ['get', 'post'] => '/templates/edit/records/id/:id' => sub
 	my $template = database->quick_select('templates_tango', { id => $template_id });
 	my $sth;
 	my $count;
-	my $perm = user_acl($template_id);
+	my $perm = user_acl($template_id, 'template');
 
 
 	if ($perm == 1)
@@ -245,7 +222,7 @@ post '/templates/edit/records/id/:id/add' => sub
         my $prio = params->{add_record_prio} || undef;
 	my $ttl = params->{add_record_ttl};
 	my $content = params->{add_record_content};
-        my $perm = user_acl($template_id);
+        my $perm = user_acl($template_id, 'template');
 
 
         if ($perm == 1)
@@ -320,7 +297,7 @@ get '/templates/edit/records/id/:id/delete/recordid/:recordid' => sub
 {
         my $template_id = params->{id} || 0;
 	my $record_id = params->{recordid} || 0;
-        my $perm = user_acl($template_id);
+        my $perm = user_acl($template_id, 'template');
 
 
         if ($perm == 1)
@@ -353,7 +330,7 @@ post '/templates/edit/records/id/:id/find/replace' => sub
         my $find_in = params->{find_in};
 	my $find_type = params->{find_type};
         my $replace = params->{find_replace};
-        my $perm = user_acl($template_id);
+        my $perm = user_acl($template_id, 'template');
         my $default_ttl_minimum = database->quick_select('admin_settings_tango', { setting => 'default_ttl_minimum' });
         $default_ttl_minimum->{value} = 3600 if (!defined $default_ttl_minimum->{value} || $default_ttl_minimum->{value} !~ m/^(\d)+$/);
 
@@ -420,7 +397,7 @@ ajax '/templates/edit/records/get/soa' => sub
 {
 	my $template_id = params->{id} || 0;
 	my $soa = database->quick_select('templates_records_tango', { template_id => $template_id, type => 'SOA' });
-        my $perm = user_acl($template_id);
+        my $perm = user_acl($template_id, 'template');
 
 
         if ($perm == 1)
@@ -454,7 +431,7 @@ ajax '/templates/edit/records/update/soa' => sub
 	my $expire = params->{expire};
 	my $minimum = params->{minimum};
 	my $ttl = params->{ttl} || 3600;
-        my $perm = user_acl($template_id);
+        my $perm = user_acl($template_id, 'template');
 
 
         if ($perm == 1)
@@ -501,7 +478,7 @@ ajax '/templates/edit/records/get/record' => sub
 {
         my $id = params->{id} || 0;
 	my $template_id = database->quick_select('templates_records_tango', { id => $id });
-	my $perm = user_acl($template_id->{template_id});
+	my $perm = user_acl($template_id->{template_id}, 'template');
 	my $record = database->quick_select('templates_records_tango', { id => $id });
 
 
@@ -528,7 +505,7 @@ ajax '/templates/edit/records/update/record' => sub
 	my $prio = params->{prio} || '';
 	my $content = params->{content};
 	my $template_id = database->quick_select('templates_records_tango', { id => $id });
-        my $perm = user_acl($template_id->{template_id});
+        my $perm = user_acl($template_id->{template_id}, 'template');
 
 
         if ($perm == 1)

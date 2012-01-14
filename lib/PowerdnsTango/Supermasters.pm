@@ -9,25 +9,9 @@ use Date::Calc qw(:all);
 use Data::Page;
 use Data::Validate::Domain qw(is_domain);
 use Data::Validate::IP qw(is_ipv4 is_ipv6);
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
-
-
-sub user_acl
-{
-        my $user_type = session 'user_type';
-        my $user_id = session 'user_id';
-
-
-        if ($user_type eq 'admin')
-        {
-                return 0;
-        }
-        else
-        {
-                return 1;
-        }
-};
+our $VERSION = '0.2';
 
 
 any ['get', 'post'] => '/supermasters' => sub

@@ -10,32 +10,9 @@ use Data::Validate::IP qw(is_ipv4 is_ipv6);
 use Email::Valid;
 use Date::Calc qw(:all);
 use Data::Page;
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
-
-
-sub user_acl
-{
-	my $domain_id = shift;
-        my $user_type = session 'user_type';
-        my $user_id = session 'user_id';
-
-        return 0 if ($user_type eq 'admin');
-
-	my $acl = database->prepare("select count(id) as count from domains_acl_tango where domain_id = ? and user_id = ?");
-        $acl->execute($domain_id, $user_id);
-        my $check_acl = $acl->fetchrow_hashref;
-
-
-        if ($check_acl->{count} == 0)
-        {
-        	return 1;
-        }
-        else
-        {
-        	return 0;
-        }
-};
+our $VERSION = '0.2';
 
 
 sub check_soa
@@ -174,7 +151,7 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub
 	my $domain = database->quick_select('domains', { id => $domain_id });
 	my $sth;
 	my $count;
-        my $perm = user_acl($domain_id);
+        my $perm = user_acl($domain_id, 'domain');
 	my $user_type = session 'user_type';
 	my $user_id = session 'user_id';
 
@@ -302,7 +279,7 @@ post '/domains/edit/records/id/:id/update/domain' => sub
         my $master = params->{edit_master};
 	my $owner_id = params->{edit_owner};
 	my ($year,$month,$day) = Today();
-        my $perm = user_acl($domain_id);
+        my $perm = user_acl($domain_id, 'domain');
 
 	$owner_id = $user_id if ($user_type ne 'admin');
 
@@ -395,7 +372,7 @@ post '/domains/edit/records/id/:id/add' => sub
         my $prio = params->{add_record_prio} || undef;
 	my $ttl = params->{add_record_ttl};
 	my $content = params->{add_record_content};
-        my $perm = user_acl($domain_id);
+        my $perm = user_acl($domain_id, 'domain');
 	my ($year,$month,$day) = Today();
 
 
@@ -493,7 +470,7 @@ post '/domains/edit/records/id/:id/add/template' => sub
         my $domain_id = params->{id} || 0;
 	my $template_id = params->{apply_template} || 0;
 	my ($year,$month,$day) = Today();
-        my $perm = user_acl($domain_id);
+        my $perm = user_acl($domain_id, 'domain');
 
 
         if ($perm == 1)
@@ -557,7 +534,7 @@ get '/domains/edit/records/id/:id/delete/recordid/:recordid' => sub
 {
         my $domain_id = params->{id} || 0;
 	my $record_id = params->{recordid} || 0;
-        my $perm = user_acl($domain_id);
+        my $perm = user_acl($domain_id, 'domain');
 	my $domain = database->quick_select('domains', { id => $domain_id });
 
 
@@ -597,7 +574,7 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 	my $find_type = params->{find_type};
 	my $replace = params->{find_replace};
 	my ($year,$month,$day) = Today();
-	my $perm = user_acl($domain_id);
+	my $perm = user_acl($domain_id, 'domain');
 	my $domain = database->quick_select('domains', { id => $domain_id });
         my $default_ttl_minimum = database->quick_select('admin_settings_tango', { setting => 'default_ttl_minimum' });
         $default_ttl_minimum->{value} = 3600 if (!defined $default_ttl_minimum->{value} || $default_ttl_minimum->{value} !~ m/^(\d)+$/);
@@ -696,7 +673,7 @@ ajax '/domains/edit/records/get/soa' => sub
 {
 	my $domain_id = params->{id} || 0;
 	my $soa = database->quick_select('records', { domain_id => $domain_id, type => 'SOA' });
-        my $perm = user_acl($domain_id);
+        my $perm = user_acl($domain_id, 'domain');
 
         if ($perm == 1)
         {
@@ -733,7 +710,7 @@ ajax '/domains/edit/records/update/soa' => sub
         my $sth = database->prepare('select count(id) as count from records where domain_id = ? and type = ?');
         $sth->execute($domain_id, 'SOA');
         my $count = $sth->fetchrow_hashref;
-        my $perm = user_acl($domain_id);
+        my $perm = user_acl($domain_id, 'domain');
 	my $domain_info = database->quick_select('domains', { id => $domain_id });
 
 
@@ -810,7 +787,7 @@ ajax '/domains/edit/records/get/record' => sub
         my $id = params->{id} || 0;
 	my $record = database->quick_select('records', { id => $id });
 	my $domain_id = database->quick_select('records', { id => $id });
-	my $perm = user_acl($domain_id->{domain_id});
+	my $perm = user_acl($domain_id->{domain_id}, 'domain');
 	my $domain = database->quick_select('domains', { id => $domain_id->{domain_id} });
 
 
@@ -837,7 +814,7 @@ ajax '/domains/edit/records/update/record' => sub
 	my $prio = params->{prio} || '';
 	my $content = params->{content};
 	my $domain_id = database->quick_select('records', { id => $id });
-        my $perm = user_acl($domain_id->{domain_id});
+        my $perm = user_acl($domain_id->{domain_id}, 'domain');
 	my ($year,$month,$day) = Today();
 
 

@@ -9,32 +9,9 @@ use Date::Calc qw(:all);
 use Data::Page;
 use Data::Validate::Domain qw(is_domain);
 use Data::Validate::IP qw(is_ipv4 is_ipv6);
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
-
-
-sub user_acl
-{
-	my $domain_id = shift;
-        my $user_type = session 'user_type';
-        my $user_id = session 'user_id';
-
-        return 0 if ($user_type eq 'admin');
-
-        my $acl = database->prepare("select count(id) as count from domains_acl_tango where domain_id = ? and user_id = ?");
-        $acl->execute($domain_id, $user_id);
-        my $check_acl = $acl->fetchrow_hashref;
-
-
-        if ($check_acl->{count} == 0)
-        {
-        	return 1;
-        }
-        else
-        {
-        	return 0;
-        }
-};
+our $VERSION = '0.2';
 
 
 any ['get', 'post'] => '/domains' => sub
@@ -398,7 +375,7 @@ post '/domains/add/bulk' => sub
 get '/domains/delete/id/:id' => sub
 {
 	my $id = params->{id} || 0;
-        my $perm = user_acl($id);
+        my $perm = user_acl($id, 'domain');
 
 
         if ($perm == 1)
@@ -434,7 +411,7 @@ ajax '/domains/update' => sub
 	my $domain = params->{name} || 0;
 	my $type = params->{type} || 0;
 	my $master = params->{master};
-        my $perm = user_acl($id);
+        my $perm = user_acl($id, 'domain');
         my $user_type = session 'user_type';
         my $user_id = session 'user_id';
 
@@ -494,7 +471,7 @@ ajax '/domains/update' => sub
 ajax '/domains/get' => sub
 {
         my $id = params->{id} || 0;
-	my $perm = user_acl($id);
+	my $perm = user_acl($id, 'domain');
 
 
         if ($perm == 1)

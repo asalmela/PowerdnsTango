@@ -7,8 +7,9 @@ use Dancer::Template::TemplateToolkit;
 use Dancer::Plugin::Ajax;
 use Data::Page;
 use Data::Validate::Domain qw(is_domain);
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 
 get '/' => sub

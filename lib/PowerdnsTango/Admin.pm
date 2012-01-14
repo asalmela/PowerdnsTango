@@ -10,25 +10,9 @@ use Crypt::SaltedHash;
 use Data::Page;
 use Email::Valid;
 use Data::Validate::Domain qw(is_domain);
+use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.1';
-
-
-sub user_acl
-{
-        my $user_type = session 'user_type';
-        my $user_id = session 'user_id';
-
-
-        if ($user_type eq 'admin')
-        {
-                return 0;
-        }
-        else
-        {
-                return 1;
-        }
-};
+our $VERSION = '0.2';
 
 
 sub check_soa
@@ -204,8 +188,12 @@ post '/admin/add/user' => sub
                 $sth->execute($login);
                 my $check_login = $sth->fetchrow_hashref;
 
+		$sth = database->prepare('select count(email) as count from users_tango where email = ?');
+		$sth->execute($email);
+		my $check_email = $sth->fetchrow_hashref;
 
-		if ($check_login->{count} == 0)
+
+		if ($check_login->{count} == 0 && $check_email->{count} == 0)
 		{
         		my $csh = Crypt::SaltedHash->new(algorithm => 'SHA-1');
         		$csh->add($password1);
@@ -215,9 +203,13 @@ post '/admin/add/user' => sub
 
 			flash message => "Account created";
 		}
-		else
+		elsif ($check_login->{count} != 0)
 		{
 			flash error => "Add account failed, username $login already exists";
+		}
+		elsif ($check_email->{count} != 0)
+		{
+			flash error => "Add account failed, email $email already exists";
 		}
 	}
 	else
@@ -364,11 +356,21 @@ ajax '/admin/save/user' => sub
         $sth->execute($login);
         my $check_login = $sth->fetchrow_hashref;
 
+	$sth = database->prepare('select count(email) as count from users_tango where email = ?');
+	$sth->execute($email);
+	my $check_email = $sth->fetchrow_hashref;
+
 
         if ($check_login->{count} != 0 && $login ne $user->{login})
         {
                 return { stat => 'fail', message => "Account update failed, username $login already exists" };
         }
+
+
+	if ($check_email->{count} != 0 && $email ne $user->{email})
+	{
+		return { stat => 'fail', message => "Account update failed, email $email already exists" };
+	}
 
 
         if ($login =~ m/(\w)+/ && $name =~ m/(\w)+/ && (Email::Valid->address($email)) && $type =~ m/(\w)+/ && $status =~ m/(\w+)/ && $domain_limit =~ m/^(\d)+$/ && $template_limit =~ m/^(\d)+$/)

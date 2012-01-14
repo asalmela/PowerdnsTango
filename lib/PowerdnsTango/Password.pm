@@ -8,8 +8,9 @@ use Dancer::Plugin::Email;
 use Crypt::SaltedHash;
 use MIME::Base64::URLSafe;
 use Date::Calc qw(:all);
+use PowerdnsTango::Acl qw(user_acl);
  
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 
 any ['get', 'post'] => '/password/recover' => sub

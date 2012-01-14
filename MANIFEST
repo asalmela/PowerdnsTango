@@ -1045,6 +1045,7 @@
 ./lib/PowerdnsTango/Supermasters.pm
 ./lib/PowerdnsTango/Home.pm
 ./lib/PowerdnsTango/Password.pm
+./lib/PowerdnsTango/Acl.pm
 ./lib/PowerdnsTango/Admin.pm
 ./lib/PowerdnsTango/Templates.pm
 ./lib/PowerdnsTango/Admin/Account.pm
