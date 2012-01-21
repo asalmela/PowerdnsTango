@@ -18,7 +18,7 @@ use PowerdnsTango::Admin::Account;
 use PowerdnsTango::Signup;
 use PowerdnsTango::Acl qw(user_acl);
  
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 
 before sub

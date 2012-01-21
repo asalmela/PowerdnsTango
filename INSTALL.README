@@ -42,6 +42,7 @@ Data::Validate::Domain
 Data::Validate::IP
 Email::Valid
 MIME::Base64::URLSafe
+Dancer::Plugin::Captcha::SecurityImage
 
 
 

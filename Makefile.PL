@@ -29,6 +29,7 @@ WriteMakefile(
 	'Data::Validate::IP' => 0,
 	'Email::Valid'	=> 0,
 	'MIME::Base64::URLSafe'	=> 0,
+	'Dancer::Plugin::Captcha::SecurityImage' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'PowerdnsTango-*' },

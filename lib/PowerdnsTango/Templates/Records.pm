@@ -11,7 +11,7 @@ use Email::Valid;
 use Data::Page;
 use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 
 sub check_soa
@@ -457,13 +457,13 @@ ajax '/templates/edit/records/update/soa' => sub
 	if (($count->{count} == 0 || $count->{count} > 1) && (defined $name_server && defined $contact && defined $refresh && defined $retry && defined $expire && defined $minimum && defined $ttl))
 	{
 		database->quick_delete('templates_records_tango', { template_id => $template_id, type => 'SOA' }) if ($count->{count} > 1);
-		database->quick_insert('templates_records_tango', { name => $domain, template_id => $template_id, type => 'SOA', content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl });
+		database->quick_insert('templates_records_tango', { name => '%zone%', template_id => $template_id, type => 'SOA', content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl });
 
 		return { stat => 'ok', message => 'SOA Updated', name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $ttl };
 	}
 	elsif (($count->{count} == 1 && $id != 0) && (defined $name_server && defined $contact && defined $refresh && defined $retry && defined $expire && defined $minimum && defined $ttl))
 	{
-		database->quick_update('templates_records_tango', { id => $id, type => 'SOA' }, { content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl });
+		database->quick_update('templates_records_tango', { id => $id, type => 'SOA' }, { name => '%zone%', content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl });
 
 		return { stat => 'ok', message => 'SOA Updated', name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $ttl };
 	}

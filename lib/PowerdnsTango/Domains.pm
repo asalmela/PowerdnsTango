@@ -11,7 +11,7 @@ use Data::Validate::Domain qw(is_domain);
 use Data::Validate::IP qw(is_ipv4 is_ipv6);
 use PowerdnsTango::Acl qw(user_acl);
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 
 any ['get', 'post'] => '/domains' => sub
@@ -144,6 +144,14 @@ post '/domains/add' => sub
 	$master =~ s/\s//g if (defined $master);
 
 
+	if (! is_domain($domain))
+	{
+		flash error => "Domain $domain is not a valid domain name";
+
+		return redirect '/domains';
+	}
+
+
 	if ($user_type ne 'admin')
 	{
 		my $user_domain_limit = database->quick_select('users_tango', { id => $user_id });
@@ -192,10 +200,6 @@ post '/domains/add' => sub
 	elsif (is_domain($domain) && $type =~ m/^SLAVE$/i && (! defined $master) || ((! is_domain($master)) && (! is_ipv4($master)) && (! is_ipv6($master))))
 	{
 		flash error => "A vaild master address must be provided";
-	}
-	else
-	{
-		flash error => "Domain $domain is not a valid domain name";
 	}
 
 	
@@ -250,16 +254,28 @@ post '/domains/add/bulk' => sub
         my $user_id = session 'user_id';
 
 
-	for (@domain)
+	for my $domain (@domain)
 	{
-                $_ =~ s/\s//g;
-                $master =~ s/\s//g if (defined $master);
-
-        	my $sth = database->prepare("select count(name) as count from domains where name = ?");
-        	$sth->execute($_);
-        	my $count = $sth->fetchrow_hashref;
 		my $msg;
 		my $err;
+
+                $domain =~ s/\s//g;
+                $master =~ s/\s//g if (defined $master);
+
+
+		if (! is_domain($domain))
+        	{
+			$err = template 'error-format', { error => "Domain $domain is not a valid domain name" }, { layout => undef };
+			$status .= $err;
+			$error++;
+
+			next;
+		}
+
+
+        	my $sth = database->prepare("select count(name) as count from domains where name = ?");
+        	$sth->execute($domain);
+        	my $count = $sth->fetchrow_hashref;
 
 
         	if ($user_type ne 'admin')
@@ -272,7 +288,7 @@ post '/domains/add/bulk' => sub
 
                 	if ($owned_domains->{count} >= $user_domain_limit->{domain_limit})
                 	{
-                        	$err = template 'error-format', { error => "Domain $_ was not added, you have reached your domain limit" }, { layout => undef };
+                        	$err = template 'error-format', { error => "Domain $domain was not added, you have reached your domain limit" }, { layout => undef };
                         	$status .= $err;
                         	$error++;
 				next;
@@ -282,54 +298,48 @@ post '/domains/add/bulk' => sub
 
 		if ($count->{count} != 0)   
         	{
-			$err = template 'error-format', { error => "Domain $_ already exists" }, { layout => undef };
+			$err = template 'error-format', { error => "Domain $domain already exists" }, { layout => undef };
 			$status .= $err;
 			$error++;
         	}
-        	elsif (is_domain($_) && ($type =~ m/^NATIVE$/i || $type =~ m/^MASTER$/i))
+        	elsif (is_domain($domain) && ($type =~ m/^NATIVE$/i || $type =~ m/^MASTER$/i))
         	{
-                	database->quick_insert('domains', { name => $_, type => $type, notified_serial => ($year . $month . $day . 1) });
-                	my $get_id = database->quick_select('domains', { name => $_ });
+                	database->quick_insert('domains', { name => $domain, type => $type, notified_serial => ($year . $month . $day . 1) });
+                	my $get_id = database->quick_select('domains', { name => $domain });
                 	database->quick_insert('domains_acl_tango', { user_id => $user_id, domain_id => $get_id->{id} });
-                        $msg = template 'message-format', { message => "Domain $_ added" }, { layout => undef };
+                        $msg = template 'message-format', { message => "Domain $domain added" }, { layout => undef };
                         $status .= $msg;
 			$success++;
         	}
-        	elsif (is_domain($_) && ($type =~ m/^SLAVE$/i) && (defined $master) && ((is_domain($master)) || (is_ipv4($master)) || (is_ipv6($master))))
+        	elsif (is_domain($domain) && ($type =~ m/^SLAVE$/i) && (defined $master) && ((is_domain($master)) || (is_ipv4($master)) || (is_ipv6($master))))
         	{
-                	database->quick_insert('domains', { name => $_, type => $type, master => $master, notified_serial => ($year . $month . $day . 1) });
-                	my $get_id = database->quick_select('domains', { name => $_ });
+                	database->quick_insert('domains', { name => $domain, type => $type, master => $master, notified_serial => ($year . $month . $day . 1) });
+                	my $get_id = database->quick_select('domains', { name => $domain });
                 	database->quick_insert('domains_acl_tango', { user_id => $user_id, domain_id => $get_id->{id} });
-                        $msg = template 'message-format', { message => "Domain $_ added" }, { layout => undef };
+                        $msg = template 'message-format', { message => "Domain $domain added" }, { layout => undef };
                         $status .= $msg;
 			$success++;
         	}
-        	elsif (is_domain($_) && ($type =~ m/^SLAVE$/i) && (! defined $master) || ((! is_domain($master)) && (! is_ipv4($master)) && (! is_ipv6($master))))
+        	elsif (is_domain($domain) && ($type =~ m/^SLAVE$/i) && (! defined $master) || ((! is_domain($master)) && (! is_ipv4($master)) && (! is_ipv6($master))))
         	{
-                        $err = template 'error-format', { error => "Domain $_ was not added, a valid master address must be provided" }, { layout => undef };
+                        $err = template 'error-format', { error => "Domain $domain was not added, a valid master address must be provided" }, { layout => undef };
                         $status .= $err;
-			$error++;
-        	}
-        	else
-        	{
-			$err = template 'error-format', { error => "Domain $_ is not a valid domain name" }, { layout => undef };
-			$status .= $err;
 			$error++;
         	}
 
         
 		if ($template_id != 0 && $success != 0 && $type !~ m/^SLAVE$/i)
         	{
-                	my $domain_id = database->quick_select('domains', { name => $_ });
+                	my $domain_id = database->quick_select('domains', { name => $domain });
                 	my $templates_records = database->prepare('select * from templates_records_tango where template_id = ?');
                 	$templates_records->execute($template_id);
 
 
                 	while (my $template_row = $templates_records->fetchrow_hashref)
                 	{
-                       		$template_row->{name} =~ s/\%(\s)?(zone|domain|host)(\s)?\%/$_/i;
+                       		$template_row->{name} =~ s/\%(\s)?(zone|domain|host)(\s)?\%/$domain/i;
                        		$template_row->{name} =~ s/\%(\s)?(.+?)(\s)?\%//i;
-                       		$template_row->{content} =~ s/\%(\s)?(zone|domain|host)(\s)?\%/$_/i;
+                       		$template_row->{content} =~ s/\%(\s)?(zone|domain|host)(\s)?\%/$domain/i;
                        		$template_row->{content} =~ s/\%(\s)?(.+?)(\s)?\%//i;
 
                        		database->quick_insert('records', { domain_id => $domain_id->{id}, name => $template_row->{name}, type => $template_row->{type}, content => $template_row->{content},
@@ -338,14 +348,14 @@ post '/domains/add/bulk' => sub
        		}
 		elsif ($type !~ m/^SLAVE$/i)
 		{	
-                	my $domain_id = database->quick_select('domains', { name => $_ });
+                	my $domain_id = database->quick_select('domains', { name => $domain });
                 	my $default_soa = database->quick_select('admin_default_soa_tango', {});
 
 			if (defined $default_soa->{name_server} && defined $default_soa->{contact} && defined $default_soa->{refresh} && defined $default_soa->{retry} && defined $default_soa->{expire} && defined 
 			$default_soa->{minimum} && defined $default_soa->{ttl})
 			{
                 		my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
-                		database->quick_insert('records', { domain_id => $domain_id->{id}, name => $_, type => 'SOA', content => $content, ttl => $default_soa->{ttl}, change_date => ($year . $month . $day . 1) });
+                		database->quick_insert('records', { domain_id => $domain_id->{id}, name => $domain, type => 'SOA', content => $content, ttl => $default_soa->{ttl}, change_date => ($year . $month . $day . 1) });
 			}
         	}
 	}

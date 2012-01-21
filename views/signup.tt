@@ -1,4 +1,4 @@
-<script>$(function(){$('input:submit, button, .button_format').button();$('img').tipTip({delay:'800'});$("#signup_form").validate({rules:{login:'required',name:'required',password1:'required',password2:'required',email:{required:true,email:true},},})});</script>
+<script>$(function(){$('input:submit, button, .button_format').button();$('img').tipTip({delay:'800'});$("#signup_form").validate({rules:{login:'required',name:'required',password1:'required',password2:'required',email:{required:true,email:true},captcha_input:'required',},})});</script>
 <span class="page_title">Sign up</span>
 <div class="line_break"></div>
 <div class="content_break"></div>
@@ -23,6 +23,13 @@
                                 <li>
                                         <label>Email</label>
                                         <input id="email" name="email" class="ui-corner-all" type="text" maxlength="255" value="[% email %]" />
+                                </li>
+                                <li>
+                                        <div id="captcha">
+                                        	<img src="/signup/captcha" alt="captcha" title="captcha" />
+                                        </div>
+                                        <label>Enter the letters above</label>
+					<input id="captcha_input" name="captcha_input" class="ui-corner-all" type="text" maxlength="10" value="" />
                                 </li>
                                 <li>
                                         <input type="submit" value="Submit" /><a href="/login" class="button_format">Cancel</a>

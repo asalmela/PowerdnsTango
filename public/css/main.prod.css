@@ -733,6 +733,8 @@ div.table_formatter_ipaddr { overflow: hidden; width: 320px; }
 .portlet_text { padding: 10px 10px 0px 10px; min-height: 140px; }
 .portlet_text table { width: 100%; }
 .portlet_right { text-align: right; }
+#captcha { height: 60px; }
+
 
 /* footer */
 #footer { width: 600px; margin-right: auto; margin-left: auto; text-align: center; padding-top: 20px; padding-bottom: 20px; font-size: 11px; color: #5a5a5a; }

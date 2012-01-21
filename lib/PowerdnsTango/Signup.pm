@@ -5,13 +5,28 @@ use Dancer::Plugin::FlashMessage;
 use Dancer::Session::Storable;
 use Dancer::Template::TemplateToolkit;
 use Dancer::Plugin::Email;
+use Dancer::Plugin::Captcha::SecurityImage;
 use Crypt::SaltedHash;
 use MIME::Base64::URLSafe;
 use Date::Calc qw(:all);
 use Email::Valid;
 use PowerdnsTango::Acl qw(user_acl);
+use Data::Dumper;
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
+
+
+get '/signup/captcha' => sub
+{
+	my @security_key = (map { ("a".."z")[rand 26] } 1..5);
+
+	create_captcha { 	new => { width => 120, height => 50, lines => 25, gd_font => 'giant', bgcolor  => '#eae6ea', },
+				create     => [ normal => 'circle', '#604977', '#80C0F0' ],
+				particle   => [ 100 ],
+				out        => { force => 'jpeg' },
+				random     => "@security_key",
+			};
+};
 
 
 any ['get', 'post'] => '/signup' => sub
@@ -21,8 +36,21 @@ any ['get', 'post'] => '/signup' => sub
 	my $password1 = params->{password1} || '';
 	my $password2 = params->{password2} || '';
 	my $email = params->{email} || '';
-        my $account_signup = database->quick_select('admin_settings_tango', { setting => 'account_signup' });
+	my $img_key = params->{captcha_input} || '';
+	my @security_key;
+	my $captcha = '';
 
+
+	if (request->method() eq "POST")
+	{
+		@security_key = split(//, $img_key);
+		map { $captcha .= $_ . ' ' if ($_ !~ m/^(\s)+$/) } @security_key;
+		chop ($captcha);
+	}
+
+
+        my $account_signup = database->quick_select('admin_settings_tango', { setting => 'account_signup' });
+	
 
 	if ($account_signup->{value} ne 'enabled' && $account_signup->{value} ne 'admin')
 	{
@@ -34,7 +62,8 @@ any ['get', 'post'] => '/signup' => sub
 
         if (request->method() eq "POST")
         {
-		if ($login =~ m/(\w)+/ && $name =~ m/(\w)+/ && $password1 =~ m/(\w)+/ && $password2 =~ m/(\w)+/ && $email =~ m/(\w)+/)
+
+		if ($login =~ m/(\w)+/ && $name =~ m/(\w)+/ && $password1 =~ m/(\w)+/ && $password2 =~ m/(\w)+/ && $email =~ m/(\w)+/ && validate_captcha $captcha)
 		{
                 	my $sth = database->prepare('select count(login) as count from users_tango where login = ?');
                 	$sth->execute($login);
@@ -152,6 +181,12 @@ any ['get', 'post'] => '/signup' => sub
 
 				return redirect '/login';
 			}
+		}
+		elsif (!validate_captcha $captcha)
+		{
+			clear_captcha;
+
+			flash error => "Signup failed, image captcha did not match";
                 }
 		else
 		{
