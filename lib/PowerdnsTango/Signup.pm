@@ -11,7 +11,6 @@ use MIME::Base64::URLSafe;
 use Date::Calc qw(:all);
 use Email::Valid;
 use PowerdnsTango::Acl qw(user_acl);
-use Data::Dumper;
 
 our $VERSION = '0.3';
 
