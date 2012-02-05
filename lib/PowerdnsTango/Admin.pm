@@ -11,54 +11,9 @@ use Data::Page;
 use Email::Valid;
 use Data::Validate::Domain qw(is_domain);
 use PowerdnsTango::Acl qw(user_acl);
+use PowerdnsTango::Validate::Records qw(check_soa);
 
 our $VERSION = '0.2';
-
-
-sub check_soa
-{
-        my ($name_server, $contact, $refresh, $retry, $expire, $minimum, $ttl) = @_;
-        my $stat = 1;
-        my $message = "ok";
-
-
-        if (!defined $name_server || ! is_domain($name_server))
-        {
-                $message = "Default SOA update failed, a name server must be a valid domain";
-        }
-        elsif (!defined $contact || (! Email::Valid->address($contact)))
-        {
-                $message = "Default SOA update failed, $contact is not a valid email address";
-        }
-        elsif (!defined $refresh || $refresh !~ m/^(\d)+$/ || $refresh < 1200)
-        {
-                $message = "Default SOA update failed, refresh must be a number equal or greater than 1200";
-        }
-        elsif (!defined $retry || $retry !~ m/^(\d)+$/ || $retry < 180)
-        {
-                $message = "Default SOA update failed, retry must be a number equal or greater than 180";
-        }
-        elsif (!defined $expire || $expire !~ m/^(\d)+$/ || $expire < 180)
-        {
-                $message = "Default SOA update failed, expire must be a number equal or greater than 180";
-        }
-        elsif (!defined $minimum || $minimum !~ m/^(\d)+$/ || $minimum < 3600 || $minimum >= 10800)
-        {
-                $message = "Default SOA update failed, minimum must be a number between 3600 and 10800";
-        }
-        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < 3600)
-        {
-                $message = "Default SOA update failed, ttl must be a number greater than 3600";
-        }
-        else
-        {
-                $stat = 0;
-        }
-
-
-
-        return ($stat, $message);
-};
 
 
 any ['get', 'post'] => '/admin' => sub
@@ -300,7 +255,7 @@ ajax '/admin/save/soa' => sub
 	
 	if ($stat == 1)
 	{
-		return { stat => 'fail', message => $message };
+		return { stat => 'fail', message => "Default SOA update failed, $message" };
 	}
 
 
@@ -465,7 +420,7 @@ ajax '/admin/save/settings' => sub
 
 	return { stat => 'fail', message => "Default domain limit must be a number" } if (!defined $default_domain_limit || $default_domain_limit !~ m/^(\d)+$/);
 	return { stat => 'fail', message => "Default template limit must be a number" } if (!defined $default_template_limit || $default_template_limit !~ m/^(\d)+$/);
-	return { stat => 'fail', message => "Default TTL minimum must be a number equal or greater than 300" } if (!defined $default_ttl_minimum || $default_ttl_minimum !~ m/^(\d)+$/ || $default_ttl_minimum < 300);
+	return { stat => 'fail', message => "Default TTL minimum must be a number equal or greater than 1" } if (!defined $default_ttl_minimum || $default_ttl_minimum !~ m/^(\d)+$/ || $default_ttl_minimum < 1);
 
         database->quick_delete('admin_settings_tango', { setting => 'account_signup' });
         database->quick_delete('admin_settings_tango', { setting => 'password_recovery' });

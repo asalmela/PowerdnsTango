@@ -10,131 +10,9 @@ use Data::Validate::IP qw(is_ipv4 is_ipv6);
 use Email::Valid;
 use Data::Page;
 use PowerdnsTango::Acl qw(user_acl);
+use PowerdnsTango::Validate::Records qw(check_soa check_record calc_serial);
 
 our $VERSION = '0.3';
-
-
-sub check_soa
-{
-        my ($name_server, $contact, $refresh, $retry, $expire, $minimum, $ttl) = @_;
-        my $stat = 1;
-        my $message = "ok";
-
-
-        if (!defined $name_server || ! is_domain($name_server))
-        {
-                $message = "a name server must be a valid domain";
-        }
-        elsif (!defined $contact || (! Email::Valid->address($contact)))
-        {
-                $message = "$contact is not a valid email address";
-        }
-        elsif (!defined $refresh || $refresh !~ m/^(\d)+$/ || $refresh < 1200)
-        {
-                $message = "refresh must be a number equal or greater than 1200";
-        }
-        elsif (!defined $retry || $retry !~ m/^(\d)+$/ || $retry < 180)
-        {
-                $message = "retry must be a number equal or greater than 180";
-        }
-        elsif (!defined $expire || $expire !~ m/^(\d)+$/ || $expire < 180)
-        {
-                $message = "expire must be a number equal or greater than 180";
-        }
-        elsif (!defined $minimum || $minimum !~ m/^(\d)+$/ || $minimum < 3600 || $minimum >= 10800)
-        {
-                $message = "minimum must be a number between 3600 and 10800";
-        }
-        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < 3600)
-        {
-                $message = "ttl must be a number equal or greater than 3600";
-        }
-        else
-        {
-                $stat = 0;
-        }
-
-
-
-        return ($stat, $message);
-};
-
-
-sub check_record
-{
-        my ($ttl, $type, $content, $prio) = @_;
-        my $stat = 1;
-        my $message = "ok";
-        my $sth;
-        my $count;
-        my $default_ttl_minimum = database->quick_select('admin_settings_tango', { setting => 'default_ttl_minimum' });
-        $default_ttl_minimum->{value} = 3600 if (!defined $default_ttl_minimum->{value} || $default_ttl_minimum->{value} !~ m/^(\d)+$/);
-
-
-        if (!defined $content)
-        {
-                $message = "Content must have a value";
-        }
-        elsif (!defined $type)
-        {
-                $message = "Type must have a value";
-        }
-        elsif ($type ne 'A' && $type ne 'AAAA' && $type ne 'CNAME' && $type ne 'LOC' && $type ne 'MX' && $type ne 'NS' && $type ne 'PTR' && $type ne 'SPF' && $type ne 'SRV' && $type ne 'TXT')
-        {
-                $message = "Type is unknown";
-        }
-        elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < $default_ttl_minimum->{value})
-        {
-                $message = "TTL must be a number equal or greater than $default_ttl_minimum->{value}";
-        }
-        elsif ($type eq 'A' && ! is_ipv4($content))
-        {
-                $message = "A record must be a valid ipv4 address";
-        }
-        elsif ($type eq 'AAAA' && ! is_ipv6($content))
-        {
-                $message = "AAAA record must be a valid ipv6 address";
-        }
-        elsif ($type eq 'CNAME' && ! is_domain($content) && $content !~ m/%zone%$/)
-        {
-                $message = "CNAME record must be unique and contain a valid domain name or %zone%";
-        }
-        elsif ($type eq 'LOC' && $content !~ m/(\w)+/)
-        {
-                $message = "LOC record must contain a geographical location";
-        }
-        elsif ($type eq 'MX' && (!defined $prio || $prio !~ m/^(\d)+$/ || $prio < 1 || $prio >= 65535 || (! is_domain($content) && $content !~ m/%zone%$/)))
-        {
-                $message = "MX record must have a priority number and contain a valid domain name or %zone%";
-        }
-        elsif ($type eq 'NS' && ! is_domain($content))
-        {
-                $message = "NS record must contain a valid domain name";
-        }
-        elsif ($type eq 'PTR' && (! is_ipv4($content) && ! is_ipv6($content)))
-        {
-                $message = "PTR record must be a valid ip address";
-        }
-        elsif ($type eq 'SPF' && $content !~ m/(\w)+/)
-        {
-                $message = "SPF record must contain alphanumeric characters";
-        }
-        elsif ($type eq 'SRV' && (!defined $prio || $prio !~ m/^(\d)+$/ || $prio < 1 || $prio >= 65535 || $content !~ m/(\w)+/))
-        {
-                $message = "SRV record must have a priority number and contain a alphanumeric characters";
-        }
-        elsif ($type eq 'TXT' && $content !~ m/(\w)+/)
-        {
-                $message = "TXT record must contain a alphanumeric characters";
-        }
-        else
-        {
-                $stat = 0;
-        }
-
-
-        return ($stat, $message);
-};
 
 
 any ['get', 'post'] => '/templates/edit/records/id/:id' => sub
@@ -249,7 +127,7 @@ post '/templates/edit/records/id/:id/add' => sub
         $name =~ s/\.\./\./gi;
 
 
-        my ($stat, $message) = check_record($ttl, $type, $content, $prio);
+        my ($stat, $message) = check_record(undef, $ttl, $type, $content, $prio, 'template');
 
 
         if ($stat == 1)
@@ -365,7 +243,7 @@ post '/templates/edit/records/id/:id/find/replace' => sub
         }
         elsif ($find_in eq 'content')
         {
-                my ($stat, $message) = check_record($default_ttl_minimum->{value}, $find_type, $replace);
+                my ($stat, $message) = check_record(undef, $default_ttl_minimum->{value}, $find_type, $replace, undef, 'template');
 
 
                 if ($stat == 1)
@@ -530,7 +408,7 @@ ajax '/templates/edit/records/update/record' => sub
         $name =~ s/\.\./\./gi;
 
 
-        my ($stat, $message) = check_record($ttl, $type, $content, $prio);
+        my ($stat, $message) = check_record(undef, $ttl, $type, $content, $prio, 'template');
 
 
         if ($stat == 1)

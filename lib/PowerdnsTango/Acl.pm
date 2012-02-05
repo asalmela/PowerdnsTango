@@ -10,8 +10,7 @@ our $VERSION = '0.1';
 
 sub user_acl
 {
-	my $obj_id = shift;
-	my $obj_type = shift;
+	my ($obj_id, $obj_type) = @_;
 	my $user_type = session 'user_type';
 	my $user_id = session 'user_id';
 	my $acl;

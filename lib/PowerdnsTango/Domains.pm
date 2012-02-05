@@ -230,7 +230,7 @@ post '/domains/add' => sub
                 if (defined $default_soa->{name_server} && defined $default_soa->{contact} && defined $default_soa->{refresh} && defined $default_soa->{retry} && defined $default_soa->{expire} && defined
                 $default_soa->{minimum} && defined $default_soa->{ttl})
 		{
-			my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . 0 . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
+			my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . $year . $month . $day . 0 . 1 . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
 			database->quick_insert('records', { domain_id => $domain_id->{id}, name => $domain, type => 'SOA', content => $content, ttl => $default_soa->{ttl}, change_date => ($year . $month . $day . 0 . 1) });
 		}
 	}
@@ -356,7 +356,7 @@ post '/domains/add/bulk' => sub
 			if (defined $default_soa->{name_server} && defined $default_soa->{contact} && defined $default_soa->{refresh} && defined $default_soa->{retry} && defined $default_soa->{expire} && defined 
 			$default_soa->{minimum} && defined $default_soa->{ttl})
 			{
-                		my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . 0 . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
+                		my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . $year . $month . $day . 0 . 1 . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
                 		database->quick_insert('records', { domain_id => $domain_id->{id}, name => $domain, type => 'SOA', content => $content, ttl => $default_soa->{ttl}, change_date => ($year . $month . $day . 0 . 1) });
 			}
         	}

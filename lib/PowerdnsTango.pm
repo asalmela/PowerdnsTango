@@ -17,6 +17,7 @@ use PowerdnsTango::Admin;
 use PowerdnsTango::Admin::Account;
 use PowerdnsTango::Signup;
 use PowerdnsTango::Acl qw(user_acl);
+use PowerdnsTango::Validate::Records qw(check_soa check_record calc_serial);
  
 our $VERSION = '0.3';
 
