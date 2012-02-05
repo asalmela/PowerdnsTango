@@ -25,6 +25,7 @@ WriteMakefile(
 	'Crypt::SaltedHash'	=> 0,
 	'Data::Page' => 0,
 	'Date::Calc' => 0,
+	'DateTime' => 0,
 	'Data::Validate::Domain' => 0,
 	'Data::Validate::IP' => 0,
 	'Email::Valid'	=> 0,

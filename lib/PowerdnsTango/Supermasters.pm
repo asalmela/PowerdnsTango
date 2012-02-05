@@ -5,7 +5,6 @@ use Dancer::Plugin::FlashMessage;
 use Dancer::Session::Storable;
 use Dancer::Template::TemplateToolkit;
 use Dancer::Plugin::Ajax;
-use Date::Calc qw(:all);
 use Data::Page;
 use Data::Validate::Domain qw(is_domain);
 use Data::Validate::IP qw(is_ipv4 is_ipv6);

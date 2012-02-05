@@ -5,7 +5,7 @@ use Dancer::Plugin::FlashMessage;
 use Dancer::Session::Storable;
 use Dancer::Template::TemplateToolkit;
 use Dancer::Plugin::Ajax;
-use Date::Calc qw(:all);
+use DateTime;
 use Data::Page;
 use Data::Validate::Domain qw(is_domain);
 use Data::Validate::IP qw(is_ipv4 is_ipv6);
@@ -136,7 +136,8 @@ post '/domains/add' => sub
 	my $template_id = params->{add_domain_template} || 0;
         my $user_type = session 'user_type';
         my $user_id = session 'user_id';
-	my ($year,$month,$day) = Today();
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-'));
 	my $success = 0;
 	my $sth;
 
@@ -181,7 +182,7 @@ post '/domains/add' => sub
 	} 
 	elsif (is_domain($domain) && ($type =~ m/^NATIVE$/i || $type =~ /^MASTER$/i))
 	{
-		database->quick_insert('domains', { name => $domain, type => $type, notified_serial => ($year . $month . $day . 1) });
+		database->quick_insert('domains', { name => $domain, type => $type, notified_serial => ($year . $month . $day . 0 . 1) });
 		my $get_id = database->quick_select('domains', { name => $domain });
 		database->quick_insert('domains_acl_tango', { user_id => $user_id, domain_id => $get_id->{id} });
 		$success++;
@@ -190,7 +191,7 @@ post '/domains/add' => sub
 	}
 	elsif (is_domain($domain) && $type =~ m/^SLAVE$/i && (defined $master) && ((is_domain($master)) || (is_ipv4($master)) || (is_ipv6($master))))
 	{
-                database->quick_insert('domains', { name => $domain, type => $type, master => $master, notified_serial => ($year . $month . $day . 1) });
+                database->quick_insert('domains', { name => $domain, type => $type, master => $master, notified_serial => ($year . $month . $day . 0 . 1) });
                 my $get_id = database->quick_select('domains', { name => $domain });
                 database->quick_insert('domains_acl_tango', { user_id => $user_id, domain_id => $get_id->{id} });
 		$success++;
@@ -218,7 +219,7 @@ post '/domains/add' => sub
                         $template_row->{content} =~ s/\%(\s)?(.+?)(\s)?\%//i;
 
 			database->quick_insert('records', { domain_id => $domain_id->{id}, name => $template_row->{name}, type => $template_row->{type}, content => $template_row->{content}, 
-			ttl => $template_row->{ttl}, prio => $template_row->{prio}, change_date => ($year . $month . $day . 1) });
+			ttl => $template_row->{ttl}, prio => $template_row->{prio}, change_date => ($year . $month . $day . 0 . 1) });
 		}
 	}
 	elsif ($type !~ m/^SLAVE$/)
@@ -229,8 +230,8 @@ post '/domains/add' => sub
                 if (defined $default_soa->{name_server} && defined $default_soa->{contact} && defined $default_soa->{refresh} && defined $default_soa->{retry} && defined $default_soa->{expire} && defined
                 $default_soa->{minimum} && defined $default_soa->{ttl})
 		{
-			my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
-			database->quick_insert('records', { domain_id => $domain_id->{id}, name => $domain, type => 'SOA', content => $content, ttl => $default_soa->{ttl}, change_date => ($year . $month . $day . 1) });
+			my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . 0 . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
+			database->quick_insert('records', { domain_id => $domain_id->{id}, name => $domain, type => 'SOA', content => $content, ttl => $default_soa->{ttl}, change_date => ($year . $month . $day . 0 . 1) });
 		}
 	}
 
@@ -249,7 +250,8 @@ post '/domains/add/bulk' => sub
         my $success = 0;
         my $error = 0;
 	my $status;
-	my ($year,$month,$day) = Today();
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-'));
         my $user_type = session 'user_type';
         my $user_id = session 'user_id';
 
@@ -304,7 +306,7 @@ post '/domains/add/bulk' => sub
         	}
         	elsif (is_domain($domain) && ($type =~ m/^NATIVE$/i || $type =~ m/^MASTER$/i))
         	{
-                	database->quick_insert('domains', { name => $domain, type => $type, notified_serial => ($year . $month . $day . 1) });
+                	database->quick_insert('domains', { name => $domain, type => $type, notified_serial => ($year . $month . $day . 0 . 1) });
                 	my $get_id = database->quick_select('domains', { name => $domain });
                 	database->quick_insert('domains_acl_tango', { user_id => $user_id, domain_id => $get_id->{id} });
                         $msg = template 'message-format', { message => "Domain $domain added" }, { layout => undef };
@@ -313,7 +315,7 @@ post '/domains/add/bulk' => sub
         	}
         	elsif (is_domain($domain) && ($type =~ m/^SLAVE$/i) && (defined $master) && ((is_domain($master)) || (is_ipv4($master)) || (is_ipv6($master))))
         	{
-                	database->quick_insert('domains', { name => $domain, type => $type, master => $master, notified_serial => ($year . $month . $day . 1) });
+                	database->quick_insert('domains', { name => $domain, type => $type, master => $master, notified_serial => ($year . $month . $day . 0 . 1) });
                 	my $get_id = database->quick_select('domains', { name => $domain });
                 	database->quick_insert('domains_acl_tango', { user_id => $user_id, domain_id => $get_id->{id} });
                         $msg = template 'message-format', { message => "Domain $domain added" }, { layout => undef };
@@ -343,7 +345,7 @@ post '/domains/add/bulk' => sub
                        		$template_row->{content} =~ s/\%(\s)?(.+?)(\s)?\%//i;
 
                        		database->quick_insert('records', { domain_id => $domain_id->{id}, name => $template_row->{name}, type => $template_row->{type}, content => $template_row->{content},
-                       		ttl => $template_row->{ttl}, prio => $template_row->{prio}, change_date => ($year . $month . $day . 1) });
+                       		ttl => $template_row->{ttl}, prio => $template_row->{prio}, change_date => ($year . $month . $day . 0 . 1) });
                		}
        		}
 		elsif ($type !~ m/^SLAVE$/i)
@@ -354,8 +356,8 @@ post '/domains/add/bulk' => sub
 			if (defined $default_soa->{name_server} && defined $default_soa->{contact} && defined $default_soa->{refresh} && defined $default_soa->{retry} && defined $default_soa->{expire} && defined 
 			$default_soa->{minimum} && defined $default_soa->{ttl})
 			{
-                		my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
-                		database->quick_insert('records', { domain_id => $domain_id->{id}, name => $domain, type => 'SOA', content => $content, ttl => $default_soa->{ttl}, change_date => ($year . $month . $day . 1) });
+                		my $content = ($default_soa->{name_server} . " " . $default_soa->{contact} . " " . 0 . " " . $default_soa->{refresh} . " " . $default_soa->{retry} . " " . $default_soa->{expire} . " " . $default_soa->{minimum});
+                		database->quick_insert('records', { domain_id => $domain_id->{id}, name => $domain, type => 'SOA', content => $content, ttl => $default_soa->{ttl}, change_date => ($year . $month . $day . 0 . 1) });
 			}
         	}
 	}

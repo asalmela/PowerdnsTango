@@ -8,7 +8,7 @@ use Dancer::Plugin::Ajax;
 use Data::Validate::Domain qw(is_domain);
 use Data::Validate::IP qw(is_ipv4 is_ipv6);
 use Email::Valid;
-use Date::Calc qw(:all);
+use DateTime;
 use Data::Page;
 use PowerdnsTango::Acl qw(user_acl);
 
@@ -24,31 +24,31 @@ sub check_soa
 
         if (!defined $name_server || ! is_domain($name_server))
         {
-                $message = "SOA update failed, a name server must be a valid domain";
+                $message = "a name server must be a valid domain";
         }
         elsif (!defined $contact || (! Email::Valid->address($contact)))
         {
-                $message = "SOA update failed, $contact is not a valid email address";
+                $message = "$contact is not a valid email address";
         }
         elsif (!defined $refresh || $refresh !~ m/^(\d)+$/ || $refresh < 1200)
         {
-                $message = "SOA update failed, refresh must be a number equal or greater than 1200";
+                $message = "refresh must be a number equal or greater than 1200";
         }
         elsif (!defined $retry || $retry !~ m/^(\d)+$/ || $retry < 180)
         {
-                $message = "SOA update failed, retry must be a number equal or greater than 180";
+                $message = "retry must be a number equal or greater than 180";
         }
         elsif (!defined $expire || $expire !~ m/^(\d)+$/ || $expire < 180)
         {
-                $message = "SOA update failed, expire must be a number equal or greater than 180";
+                $message = "expire must be a number equal or greater than 180";
         }
         elsif (!defined $minimum || $minimum !~ m/^(\d)+$/ || $minimum < 3600 || $minimum >= 10800)
         {
-                $message = "SOA update failed, minimum must be a number between 3600 and 10800";
+                $message = "minimum must be a number between 3600 and 10800";
         }
         elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < 3600)
         {
-                $message = "SOA update failed, ttl must be a number equal or greater than 3600";
+                $message = "ttl must be a number equal or greater than 3600";
         }
         else
         {
@@ -59,6 +59,37 @@ sub check_soa
 
         return ($stat, $message);
 };
+
+
+sub calc_serial 
+{
+	my $domain_old_serial = shift;
+
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-'));
+	my $domain_serial = ($year . $month . $day . 0 . 1);
+
+
+	for (my $i = 1; $domain_old_serial >= $domain_serial; $i++)
+	{
+		if ($i >= 100)
+		{
+			# Can't go any higher in one day without breaking RFC
+			return ($year . $month . $day . 99);
+		}
+		elsif ($i >= 10)
+		{
+			$domain_serial = ($year . $month . $day . $i);
+		}
+		else
+		{
+			$domain_serial = ($year . $month . $day . '0' . $i);
+		}
+	}
+
+
+	return ($domain_serial);
+}
 
 
 sub check_record
@@ -182,7 +213,7 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub
         $sth->execute($domain_id, 'SOA');
         my $soa = $sth->fetchrow_hashref;
 
-	my ($name_server, $contact, $refresh, $retry, $expire, $minimum) = (split /\s/, $soa->{content}) if (defined $soa->{content});
+	my ($name_server, $contact, undef, $refresh, $retry, $expire, $minimum) = (split /\s/, $soa->{content}) if (defined $soa->{content});
 	$name_server = '' if (! defined $name_server);
 	$contact = '' if (! defined $contact);
 	$refresh = '' if (! defined $refresh);
@@ -278,7 +309,8 @@ post '/domains/edit/records/id/:id/update/domain' => sub
         my $type = params->{edit_type} || 0;
         my $master = params->{edit_master};
 	my $owner_id = params->{edit_owner};
-	my ($year,$month,$day) = Today();
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-'));
         my $perm = user_acl($domain_id, 'domain');
 
 	$owner_id = $user_id if ($user_type ne 'admin');
@@ -294,16 +326,8 @@ post '/domains/edit/records/id/:id/update/domain' => sub
 
         my $domain_info = database->quick_select('domains', { id => $domain_id });
         my $domain_old_serial = $domain_info->{notified_serial} || 0;
-        my $domain_serial = ($year . $month . $day . 1);
-
-
-        for (my $i = 1; $domain_old_serial >= $domain_serial; $i++)
-        {
-                $domain_serial = ($year . $month . $day . $i);
-        }
-
-
-        my $record_change_date = ($year . $month . $day . 1);
+        my $domain_serial = calc_serial($domain_old_serial);
+        my $record_change_date = ($year . $month . $day . 0 . 1);
 
 
         my $sth = database->prepare("select count(name) as count from domains where name = ?");
@@ -373,7 +397,8 @@ post '/domains/edit/records/id/:id/add' => sub
 	my $ttl = params->{add_record_ttl};
 	my $content = params->{add_record_content};
         my $perm = user_acl($domain_id, 'domain');
-	my ($year,$month,$day) = Today();
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-'));
 
 
         if ($perm == 1)
@@ -386,7 +411,7 @@ post '/domains/edit/records/id/:id/add' => sub
 
         my $domain = database->quick_select('domains', { id => $domain_id });
         my $domain_old_serial = $domain->{notified_serial} || 0;
-        my $domain_serial = ($year . $month . $day . '1');
+        my $domain_serial = calc_serial($domain_old_serial);
 
 	$name =~ s/$domain->{name}$//i;
 
@@ -428,13 +453,7 @@ post '/domains/edit/records/id/:id/add' => sub
 	}
 
 
-        for (my $i = 1; $domain_old_serial >= $domain_serial; $i++)
-        {
-                $domain_serial = ($year . $month . $day . $i);
-        }
-
-
-        my $record_change_date = ($year . $month . $day . 1);
+        my $record_change_date = ($year . $month . $day . 0 . 1);
 
 
 	if (($domain_id != 0 && ! defined $prio) && (defined $name && defined $type && defined $ttl && defined $content && $domain->{type} !~ m/^SLAVE$/i))
@@ -469,7 +488,8 @@ post '/domains/edit/records/id/:id/add/template' => sub
 {
         my $domain_id = params->{id} || 0;
 	my $template_id = params->{apply_template} || 0;
-	my ($year,$month,$day) = Today();
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-')); 
         my $perm = user_acl($domain_id, 'domain');
 
 
@@ -487,17 +507,11 @@ post '/domains/edit/records/id/:id/add/template' => sub
 	if ($domain->{type} !~ m/^SLAVE$/i)
 	{
         	my $domain_old_serial = $domain->{notified_serial} || 0;
-        	my $domain_serial = ($year . $month . $day. 1);
-
-
-        	for (my $i = 1; $domain_old_serial >= $domain_serial; $i++)
-        	{
-                	$domain_serial = ($year . $month . $day . $i);
-        	}
+        	my $domain_serial = calc_serial($domain_old_serial);
 
 
 		database->quick_update('domains', { id => $domain_id }, { notified_serial => $domain_serial });
-        	my $record_change_date = ($year . $month . $day . 1);
+        	my $record_change_date = ($year . $month . $day . 0 . 1);
 
 
         	database->quick_delete('records', { domain_id => $domain_id });
@@ -573,7 +587,8 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 	my $find_in = params->{find_in};
 	my $find_type = params->{find_type};
 	my $replace = params->{find_replace};
-	my ($year,$month,$day) = Today();
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-'));
 	my $perm = user_acl($domain_id, 'domain');
 	my $domain = database->quick_select('domains', { id => $domain_id });
         my $default_ttl_minimum = database->quick_select('admin_settings_tango', { setting => 'default_ttl_minimum' });
@@ -641,16 +656,8 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 
         my $serial = database->quick_select('domains', { id => $domain_id });
         my $domain_old_serial = $serial->{notified_serial} || 0;
-        my $domain_serial = ($year . $month . $day. 1);
-
-
-        for (my $i = 1; $domain_old_serial >= $domain_serial; $i++)
-        {
-                $domain_serial = ($year . $month . $day . $i);
-        }
-
-
-        my $record_change_date = ($year . $month . $day);
+        my $domain_serial = calc_serial($domain_old_serial);
+        my $record_change_date = ($year . $month . $day . 0 . 1);
 
 
 	if ($find_in eq 'content' || $find_in eq 'ttl' || $find_in eq 'prio')
@@ -681,7 +688,7 @@ ajax '/domains/edit/records/get/soa' => sub
         }
 
 
-	my ($name_server, $contact, $refresh, $retry, $expire, $minimum) = (split /\s/, $soa->{content}) if (defined $soa->{content});
+	my ($name_server, $contact, undef, $refresh, $retry, $expire, $minimum) = (split /\s/, $soa->{content}) if (defined $soa->{content});
         $name_server = '' if (! defined $name_server);
         $contact = '' if (! defined $contact);
         $refresh = '' if (! defined $refresh);
@@ -706,7 +713,8 @@ ajax '/domains/edit/records/update/soa' => sub
 	my $expire = params->{expire};
 	my $minimum = params->{minimum};
 	my $ttl = params->{ttl} || 3600;
-	my ($year,$month,$day) = Today();
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-'));
         my $sth = database->prepare('select count(id) as count from records where domain_id = ? and type = ?');
         $sth->execute($domain_id, 'SOA');
         my $count = $sth->fetchrow_hashref;
@@ -731,36 +739,22 @@ ajax '/domains/edit/records/update/soa' => sub
 
         if ($stat == 1)
         {
-                return { stat => 'fail', message => $message };
+                return { stat => 'fail', message => "SOA update failed, $message" };
         }
 
 
 
 	my $domain_old_serial = $domain_info->{notified_serial} || 0;
-	my $domain_serial = ($year . $month . $day. 1);
-
-
-        for (my $i = 1; $domain_old_serial >= $domain_serial; $i++)
-        {
-                $domain_serial = ($year . $month . $day . $i);
-        }
-
-
+	my $domain_serial = calc_serial($domain_old_serial);
 	my $soa = database->quick_select('records', { domain_id => $domain_id, type => 'SOA' });
 	my $record_old_change_date = $soa->{change_date} || 0;
-	my $record_change_date = ($year . $month . $day . 1);
-
-
-	for (my $i = 1; $record_old_change_date >= $record_change_date; $i++)
-	{
-		$record_change_date = ($year . $month . $day . $i);
-	}
+	my $record_change_date = calc_serial($record_old_change_date);
 
 
 	if ($count->{count} == 0 || $count->{count} > 1)
 	{
 		database->quick_delete('records', { domain_id => $domain_id, type => 'SOA' }) if ($count->{count} > 1);
-		database->quick_insert('records', { name => $domain, domain_id => $domain_id, type => 'SOA', content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl, change_date => $record_change_date });
+		database->quick_insert('records', { name => $domain, domain_id => $domain_id, type => 'SOA', content => "$name_server $contact $domain_serial $refresh $retry $expire $minimum", ttl => $ttl, change_date => $record_change_date });
 		database->quick_update('domains', { id => $domain_id }, { notified_serial => $domain_serial });
 
 
@@ -768,7 +762,7 @@ ajax '/domains/edit/records/update/soa' => sub
 	}
 	elsif ($count->{count} == 1 && $id != 0)
 	{
-		database->quick_update('records', { id => $id, type => 'SOA' }, { content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl, change_date => $record_change_date });
+		database->quick_update('records', { id => $id, type => 'SOA' }, { content => "$name_server $contact $domain_serial $refresh $retry $expire $minimum", ttl => $ttl, change_date => $record_change_date });
 		database->quick_update('domains', { id => $domain_id }, { notified_serial => $domain_serial });
 
 
@@ -815,7 +809,8 @@ ajax '/domains/edit/records/update/record' => sub
 	my $content = params->{content};
 	my $domain_id = database->quick_select('records', { id => $id });
         my $perm = user_acl($domain_id->{domain_id}, 'domain');
-	my ($year,$month,$day) = Today();
+	my $dt = DateTime->now;
+	my ($year,$month,$day) = split(/-/, $dt->ymd('-'));
 
 
         if ($perm == 1)
@@ -870,24 +865,10 @@ ajax '/domains/edit/records/update/record' => sub
 
 
         my $domain_old_serial = $domain->{notified_serial} || 0;
-        my $domain_serial = ($year . $month . $day . 1);
-
-
-        for (my $i = 1; $domain_old_serial >= $domain_serial; $i++)
-        {
-                $domain_serial = ($year . $month . $day . $i);
-        }
-
-
+        my $domain_serial = calc_serial($domain_old_serial);
         my $soa = database->quick_select('records', { id => $id });
         my $record_old_change_date = $soa->{change_date} || 0;
-        my $record_change_date = ($year . $month . $day . 1);
-
-
-        for (my $i = 1; $record_old_change_date >= $record_change_date; $i++)
-        {
-                $record_change_date = ($year . $month . $day . $i);
-        }
+        my $record_change_date = calc_serial($record_old_change_date);
 
 
 	if ($id != 0 && (defined $name && defined $type && defined $ttl && defined $prio && defined $content))

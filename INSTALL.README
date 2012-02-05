@@ -38,6 +38,7 @@ Dancer::Template::TemplateToolkit
 Crypt::SaltedHash
 Data::Page
 Date::Calc
+DateTime
 Data::Validate::Domain
 Data::Validate::IP
 Email::Valid

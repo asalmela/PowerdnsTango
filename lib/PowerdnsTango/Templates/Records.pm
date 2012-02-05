@@ -23,31 +23,31 @@ sub check_soa
 
         if (!defined $name_server || ! is_domain($name_server))
         {
-                $message = "SOA update failed, a name server must be a valid domain";
+                $message = "a name server must be a valid domain";
         }
         elsif (!defined $contact || (! Email::Valid->address($contact)))
         {
-                $message = "SOA update failed, $contact is not a valid email address";
+                $message = "$contact is not a valid email address";
         }
         elsif (!defined $refresh || $refresh !~ m/^(\d)+$/ || $refresh < 1200)
         {
-                $message = "SOA update failed, refresh must be a number equal or greater than 1200";
+                $message = "refresh must be a number equal or greater than 1200";
         }
         elsif (!defined $retry || $retry !~ m/^(\d)+$/ || $retry < 180)
         {
-                $message = "SOA update failed, retry must be a number equal or greater than 180";
+                $message = "retry must be a number equal or greater than 180";
         }
         elsif (!defined $expire || $expire !~ m/^(\d)+$/ || $expire < 180)
         {
-                $message = "SOA update failed, expire must be a number equal or greater than 180";
+                $message = "expire must be a number equal or greater than 180";
         }
         elsif (!defined $minimum || $minimum !~ m/^(\d)+$/ || $minimum < 3600 || $minimum >= 10800)
         {
-                $message = "SOA update failed, minimum must be a number between 3600 and 10800";
+                $message = "minimum must be a number between 3600 and 10800";
         }
         elsif (!defined $ttl || $ttl !~ m/^(\d)+$/ || $ttl < 3600)
         {
-                $message = "SOA update failed, ttl must be a number equal or greater than 3600";
+                $message = "ttl must be a number equal or greater than 3600";
         }
         else
         {
@@ -175,7 +175,7 @@ any ['get', 'post'] => '/templates/edit/records/id/:id' => sub
         $sth->execute($template_id, 'SOA');
         my $soa = $sth->fetchrow_hashref;
 
-	my ($name_server, $contact, $refresh, $retry, $expire, $minimum) = (split /\s/, $soa->{content}) if (defined $soa->{content});
+	my ($name_server, $contact, undef, $refresh, $retry, $expire, $minimum) = (split /\s/, $soa->{content}) if (defined $soa->{content});
 	$name_server = '' if (! defined $name_server);
 	$contact = '' if (! defined $contact);
 	$refresh = '' if (! defined $refresh);
@@ -406,7 +406,7 @@ ajax '/templates/edit/records/get/soa' => sub
         }
 
 
-	my ($name_server, $contact, $refresh, $retry, $expire, $minimum) = (split /\s/, $soa->{content}) if (defined $soa->{content});
+	my ($name_server, $contact, undef, $refresh, $retry, $expire, $minimum) = (split /\s/, $soa->{content}) if (defined $soa->{content});
         $name_server = '' if (! defined $name_server);
         $contact = '' if (! defined $contact);
         $refresh = '' if (! defined $refresh);
@@ -457,13 +457,13 @@ ajax '/templates/edit/records/update/soa' => sub
 	if (($count->{count} == 0 || $count->{count} > 1) && (defined $name_server && defined $contact && defined $refresh && defined $retry && defined $expire && defined $minimum && defined $ttl))
 	{
 		database->quick_delete('templates_records_tango', { template_id => $template_id, type => 'SOA' }) if ($count->{count} > 1);
-		database->quick_insert('templates_records_tango', { name => '%zone%', template_id => $template_id, type => 'SOA', content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl });
+		database->quick_insert('templates_records_tango', { name => '%zone%', template_id => $template_id, type => 'SOA', content => "$name_server $contact 0 $refresh $retry $expire $minimum", ttl => $ttl });
 
 		return { stat => 'ok', message => 'SOA Updated', name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $ttl };
 	}
 	elsif (($count->{count} == 1 && $id != 0) && (defined $name_server && defined $contact && defined $refresh && defined $retry && defined $expire && defined $minimum && defined $ttl))
 	{
-		database->quick_update('templates_records_tango', { id => $id, type => 'SOA' }, { name => '%zone%', content => "$name_server $contact $refresh $retry $expire $minimum", ttl => $ttl });
+		database->quick_update('templates_records_tango', { id => $id, type => 'SOA' }, { name => '%zone%', content => "$name_server $contact 0 $refresh $retry $expire $minimum", ttl => $ttl });
 
 		return { stat => 'ok', message => 'SOA Updated', name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $ttl };
 	}
