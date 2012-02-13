@@ -485,7 +485,7 @@ post '/domains/edit/records/id/:id/find/replace' => sub
 	}
 	elsif ($find_in eq 'content')
 	{
-        	my ($stat, $message) = check_record(undef, $default_ttl_minimum->{value}, $find_type, $replace, undef, 'live');
+        	my ($stat, $message) = check_record($domain, $default_ttl_minimum->{value}, $find_type, $replace, undef, 'live');
 
 
         	if ($stat == 1)

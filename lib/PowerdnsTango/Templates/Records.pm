@@ -127,7 +127,7 @@ post '/templates/edit/records/id/:id/add' => sub
         $name =~ s/\.\./\./gi;
 
 
-        my ($stat, $message) = check_record(undef, $ttl, $type, $content, $prio, 'template');
+        my ($stat, $message) = check_record('dummy.com', $ttl, $type, $content, $prio, 'template');
 
 
         if ($stat == 1)
@@ -243,7 +243,7 @@ post '/templates/edit/records/id/:id/find/replace' => sub
         }
         elsif ($find_in eq 'content')
         {
-                my ($stat, $message) = check_record(undef, $default_ttl_minimum->{value}, $find_type, $replace, undef, 'template');
+                my ($stat, $message) = check_record('dummy.com', $default_ttl_minimum->{value}, $find_type, $replace, undef, 'template');
 
 
                 if ($stat == 1)
@@ -408,7 +408,7 @@ ajax '/templates/edit/records/update/record' => sub
         $name =~ s/\.\./\./gi;
 
 
-        my ($stat, $message) = check_record(undef, $ttl, $type, $content, $prio, 'template');
+        my ($stat, $message) = check_record('dummy.com', $ttl, $type, $content, $prio, 'template');
 
 
         if ($stat == 1)

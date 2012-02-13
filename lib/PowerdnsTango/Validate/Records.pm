@@ -11,7 +11,7 @@ use DateTime;
 use base "Exporter";
 
 our @EXPORT = qw(check_soa check_record calc_serial);
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 
 sub check_soa
@@ -39,7 +39,7 @@ sub check_soa
 	}
 	elsif (!defined $expire || $expire !~ m/^(\d)+$/ || $expire < 1209600 || $expire > 2419200)
 	{
-	$message = "expire must be a number between 1209600 and 2419200";
+		$message = "expire must be a number between 1209600 and 2419200";
 	}
 	elsif (!defined $minimum || $minimum !~ m/^(\d)+$/ || $minimum < 3600 || $minimum >= 10800)
 	{
@@ -70,14 +70,13 @@ sub check_record
 	$default_ttl_minimum->{value} = 3600 if (!defined $default_ttl_minimum->{value} || $default_ttl_minimum->{value} !~ m/^(\d)+$/);
 
 	$record_type = 'live' if (!defined $record_type && ($record_type ne 'live' || $record_type ne 'template'));
-	$name = 'null.com' if (!defined $name);
 
 
 	if ($record_type eq 'live' && ($content =~ m/%zone%/ || $name =~ m/%zone%/))
 	{
 		$message = "Use of %zone% is only allowed in templates";
 	}
-	elsif (!defined || ! is_domain($name))
+	elsif (!defined $name || (! is_domain($name) && $type ne 'TXT') || ($name !~ m/(\w)+/))
 	{
 		$message = "Name is invalid";
 	}
