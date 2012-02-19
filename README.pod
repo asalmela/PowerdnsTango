@@ -139,7 +139,10 @@ Please note, Internet Explorer 7 and below is not supported.
 
 =head2 Feedback / Reporting bugs / Contact
 
-You can reach me via email sarah@averna.id.au or on google plus
+For feature requests & bug reports please use github issues, 
+https://github.com/averna-syd/PowerdnsTango/issues
+
+For support & general feedback, you can reach me via email sarah@averna.id.au or on google plus
 https://plus.google.com/117340570849980417814/about
 
 
