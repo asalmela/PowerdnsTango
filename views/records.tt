@@ -442,16 +442,16 @@
         [% IF lastpage > 1 %]
                 <div id="page_sort">
                         <div class="content_break"></div>
-                        <a href="/domains/edit/records/id/[% id %]?p=1&r=[% results %]">&#xab; First</a>
-                        <a href="/domains/edit/records/id/[% id %]?p=[% previouspage %]&r=[% results %]">&#x8B; Back</a>
+                        <a href="/domains/edit/records/id/[% domain_id %]?p=1&r=[% results %]">&#xab; First</a>
+                        <a href="/domains/edit/records/id/[% domain_id %]?p=[% previouspage %]&r=[% results %]">&#x8B; Back</a>
                         <span>page [% page %] of [% lastpage %]</span>
-                        <a href="/domains/edit/records/id/[% id %]?p=[% nextpage %]&r=[% results %]">Next &#x9b;</a>
-                        <a href="/domains/edit/records/id/[% id %]?p=[% lastpage %]&r=[% results %]">Last &#xbb;</a>
+                        <a href="/domains/edit/records/id/[% domain_id %]?p=[% nextpage %]&r=[% results %]">Next &#x9b;</a>
+                        <a href="/domains/edit/records/id/[% domain_id %]?p=[% lastpage %]&r=[% results %]">Last &#xbb;</a>
                         <div id="results_per_page">
                                 <span>Results per page</span>
-                                <a href="/domains/edit/records/id/[% id %]?p=[% page %]&r=25">25</a>
-                                <a href="/domains/edit/records/id/[% id %]?p=[% page %]&r=50">50</a>
-                                <a href="/domains/edit/records/id/[% id %]?p=[% page %]&r=100">100</a>
+                                <a href="/domains/edit/records/id/[% domain_id %]?p=[% page %]&r=25">25</a>
+                                <a href="/domains/edit/records/id/[% domain_id %]?p=[% page %]&r=50">50</a>
+                                <a href="/domains/edit/records/id/[% domain_id %]?p=[% page %]&r=100">100</a>
                         </div>
                 </div>
         [% END %]
