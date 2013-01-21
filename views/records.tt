@@ -378,7 +378,7 @@
                                 </td>
                         </tr>
 
-                [% FOREACH id IN records.keys.sort %]
+                [% FOREACH record IN records %]
                 [% IF colour == 'table_formatter_color1' %]
                         [% colour = 'table_formatter_color2' %]
                 [% ELSE %]
@@ -387,22 +387,22 @@
                 [% END %]
                         <tr>
                                 <td>
-					[% nice_name = records.$id.name.replace('.' _ domain_name, '') %]
+					[% nice_name = record.name.replace('.' _ domain_name, '') %]
 					[%  nice_name = nice_name.replace(domain_name, '') %]
                                         <div class="table_formatter table_formatter_name ui-corner-all [% colour %]">
-                                                <span id="name_[% records.$id.id %]">[% nice_name %]</span>
-                                                <input id="edit_name_[% records.$id.id %]" name="edit_name" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% records.$id.name %]" />
+                                                <span id="name_[% record.id %]">[% nice_name %]</span>
+                                                <input id="edit_name_[% record.id %]" name="edit_name" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% record.name %]" />
                                         </div>
                                 </td>
 				<td>
                                         <div class="table_formatter table_formatter_ttl ui-corner-all [% colour %]">
-                                                <span id="ttl_[% records.$id.id %]">[% records.$id.ttl %]</span>
-                                                <input id="edit_ttl_[% records.$id.id %]" name="edit_ttl" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% records.$id.ttl %]" />
+                                                <span id="ttl_[% record.id %]">[% record.ttl %]</span>
+                                                <input id="edit_ttl_[% record.id %]" name="edit_ttl" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% record.ttl %]" />
                                         </div>
                                 <td>
                                         <div class="table_formatter table_formatter_rtype ui-corner-all [% colour %]">
-                                                <span id="type_[% records.$id.id %]">[% records.$id.type %]</span>
-						<select id="edit_type_[% records.$id.id %]" select="[% records.$id.id %]" class="edit_type display_hidden"  title="Type" name="edit_type">
+                                                <span id="type_[% record.id %]">[% record.type %]</span>
+						<select id="edit_type_[% record.id %]" select="[% record.id %]" class="edit_type display_hidden"  title="Type" name="edit_type">
                                         		<option value="A" selected="selected">A</option>
                                         		<option value="AAAA">AAAA</option>
                                         		<option value="CNAME">CNAME</option>
@@ -418,22 +418,22 @@
                                 </td>
                                 <td>
                                         <div class="table_formatter table_formatter_prio ui-corner-all [% colour %]">
-                                                <span id="prio_[% records.$id.id %]">[% records.$id.prio %]</span>
-                                                <input id="edit_prio_[% records.$id.id %]" name="edit_prio" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% records.$id.prio %]" />
+                                                <span id="prio_[% record.id %]">[% record.prio %]</span>
+                                                <input id="edit_prio_[% record.id %]" name="edit_prio" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% record.prio %]" />
                                         </div>
                                 </td>
                                 <td>
                                         <div class="table_formatter table_formatter_content ui-corner-all [% colour %]">
-                                                <span id="content_[% records.$id.id %]">[% records.$id.content %]</span>
-                                                <input id="edit_content_[% records.$id.id %]" name="edit_content" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% records.$id.content %]" />
+                                                <span id="content_[% record.id %]">[% record.content %]</span>
+                                                <input id="edit_content_[% record.id %]" name="edit_content" class="display_hidden ui-corner-all" type="text" maxlength="255" value="[% record.content %]" />
                                         </div>
                                 </td>
                                 <td>
                                         <div class="table_formatter table_formatter_links ui-corner-all [% colour %]">
-                                                <a href="#"><img id="edit_record_[% records.$id.id %]" class="edit_record_button" edit="[% records.$id.id %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
-                                                <a href="/domains/edit/records/id/[% domain_id %]/delete/recordid/[% records.$id.id %]" class="confirm_link"><img id="delete_record_[% records.$id.id %]" delete="[% records.$id.id %]" src="/images/icons/database_delete.png" class="center" alt="Delete" title="Delete" /></a>
-                                                <a href="#"><img id="save_record_[% records.$id.id %]" class="save_record_button display_hidden" save="[% records.$id.id %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
-                                                <a href="#"><img id="cancel_record_[% records.$id.id %]" class="cancel_record_button display_hidden" cancel="[% records.$id.id %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
+                                                <a href="#"><img id="edit_record_[% record.id %]" class="edit_record_button" edit="[% record.id %]" src="/images/icons/database_edit.png" class="center" alt="Edit" title="Edit" /></a>
+                                                <a href="/domains/edit/records/id/[% domain_id %]/delete/recordid/[% record.id %]" class="confirm_link"><img id="delete_record_[% record.id %]" delete="[% record.id %]" src="/images/icons/database_delete.png" class="center" alt="Delete" title="Delete" /></a>
+                                                <a href="#"><img id="save_record_[% record.id %]" class="save_record_button display_hidden" save="[% record.id %]" src="/images/icons/table_save.png" class="center" alt="Save" title="Save" /></a>
+                                                <a href="#"><img id="cancel_record_[% record.id %]" class="cancel_record_button display_hidden" cancel="[% record.id %]" src="/images/icons/cancel.png" class="center" alt="Cancel" title="Cancel" /></a>
                                         </div>
                                 </td>
                         </tr>
@@ -442,16 +442,16 @@
         [% IF lastpage > 1 %]
                 <div id="page_sort">
                         <div class="content_break"></div>
-                        <a href="/domains/edit/records/id/[% id %]?p=1&r=[% results %]">&#xab; First</a>
-                        <a href="/domains/edit/records/id/[% id %]?p=[% previouspage %]&r=[% results %]">&#x8B; Back</a>
+                        <a href="/domains/edit/records/id/[% domain_id %]?p=1&r=[% results %]">&#xab; First</a>
+                        <a href="/domains/edit/records/id/[% domain_id %]?p=[% previouspage %]&r=[% results %]">&#x8B; Back</a>
                         <span>page [% page %] of [% lastpage %]</span>
-                        <a href="/domains/edit/records/id/[% id %]?p=[% nextpage %]&r=[% results %]">Next &#x9b;</a>
-                        <a href="/domains/edit/records/id/[% id %]?p=[% lastpage %]&r=[% results %]">Last &#xbb;</a>
+                        <a href="/domains/edit/records/id/[% domain_id %]?p=[% nextpage %]&r=[% results %]">Next &#x9b;</a>
+                        <a href="/domains/edit/records/id/[% domain_id %]?p=[% lastpage %]&r=[% results %]">Last &#xbb;</a>
                         <div id="results_per_page">
                                 <span>Results per page</span>
-                                <a href="/domains/edit/records/id/[% id %]?p=[% page %]&r=25">25</a>
-                                <a href="/domains/edit/records/id/[% id %]?p=[% page %]&r=50">50</a>
-                                <a href="/domains/edit/records/id/[% id %]?p=[% page %]&r=100">100</a>
+                                <a href="/domains/edit/records/id/[% domain_id %]?p=[% page %]&r=25">25</a>
+                                <a href="/domains/edit/records/id/[% domain_id %]?p=[% page %]&r=50">50</a>
+                                <a href="/domains/edit/records/id/[% domain_id %]?p=[% page %]&r=100">100</a>
                         </div>
                 </div>
         [% END %]
