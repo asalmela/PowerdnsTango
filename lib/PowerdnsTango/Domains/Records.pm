@@ -40,7 +40,7 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub
 
         if (request->method() eq "POST" && $search ne '0')
         {
-		$sth = database->prepare('select count(id) as count from records where domain_id = ? and type != ? and (name like ? or content like ? or ttl::text like ?)');
+		$sth = database->prepare('select count(id) as count from records where domain_id = ? and type != ? and (name like ? or content like ? or ttl like ?)');
 		$sth->execute($domain_id, 'SOA', "%$search%", "%$search%", "%$search%");
 		$count = $sth->fetchrow_hashref;
 	}
@@ -76,7 +76,7 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub
 
 	if (request->method() eq "POST" && $search ne '0')
         {
-        	$sth = database->prepare('select * from records where domain_id = ? and type != ? and (name like ? or content like ? or ttl::text like ?) limit ? offset ?');
+        	$sth = database->prepare('select * from records where domain_id = ? and type != ? and (name like ? or content like ? or ttl like ?) limit ? offset ?');
         	$sth->execute($domain_id, 'SOA', "%$search%", "%$search%", "%$search%", $page->entries_per_page, $display);
 
                 flash error => "Record search found no match" if ($count->{'count'} == 0);
@@ -84,15 +84,10 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub
 	}
 	else
 	{
-                $sth = database->prepare('select * from records where domain_id = ? and type != ? order by ordername, type, content limit ? offset ?');
+                $sth = database->prepare('select * from records where domain_id = ? and type != ? limit ? offset ?');
                 $sth->execute($domain_id, 'SOA', $page->entries_per_page, $display);
 	}
-	
-	my @records;
 
-	while( my $ref = $sth->fetchrow_hashref ) {
-		push @records, $ref;
-	}
 
 	my $users;
 	my $owner_id;
@@ -141,7 +136,7 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub
         }
 
 
-        template 'records', { domain_id => $domain_id, domain_name => $domain->{name}, domain_type => $domain->{type}, domain_master => $domain->{master}, records => \@records, 
+        template 'records', { domain_id => $domain_id, domain_name => $domain->{name}, domain_type => $domain->{type}, domain_master => $domain->{master}, records => $sth->fetchall_hashref('id'), 
 	templates => $templates->fetchall_hashref('id'), page => $load_page, results => $results_per_page,  previouspage => ($load_page - 1), nextpage => ($load_page + 1),
 	lastpage => $page->last_page, soa_id => $soa->{id}, name_server => $name_server, contact => $contact, refresh => $refresh, retry => $retry, expire => $expire, minimum => $minimum, ttl => $soa->{ttl},
 	users => $users->fetchall_hashref('id'), domain_owner_id => $owner_id, domain_owner_login => $owner_login };
