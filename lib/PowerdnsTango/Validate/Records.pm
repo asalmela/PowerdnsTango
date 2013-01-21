@@ -76,7 +76,7 @@ sub check_record
 	{
 		$message = "Use of %zone% is only allowed in templates";
 	}
-	elsif (!defined $name || (! is_domain($name) && $type ne 'TXT') || ($name !~ m/(\w)+/))
+	elsif (!defined $name || ($name !~ m/(\w)+/))
 	{
 		$message = "Name is invalid";
 	}
@@ -104,25 +104,17 @@ sub check_record
 	{
 		$message = "AAAA record must be a valid ipv6 address";
 	}
-	elsif ($type eq 'CNAME' && ! is_domain($content) && $content !~ m/%zone%$/)
-	{
-		$message = "CNAME record must be unique and contain a valid domain name";
-	}
 	elsif ($type eq 'LOC' && $content !~ m/(\w)+/)
 	{
 		$message = "LOC record must contain a geographical location";
 	}
-	elsif ($type eq 'MX' && (!defined $prio || $prio !~ m/^(\d)+$/ || $prio < 1 || $prio >= 65535 || (! is_domain($content) && $content !~ m/%zone%$/)))
+	elsif ($type eq 'MX' && (!defined $prio || $prio !~ m/^(\d)+$/ || $prio < 1 || $prio >= 65535 ))
 	{
 		$message = "MX record must have a priority number and contain a valid domain name";
 	}
 	elsif ($type eq 'NS' && ! is_domain($content))
 	{
 		$message = "NS record must contain a valid domain name";
-	}
-	elsif ($type eq 'PTR' && (! is_ipv4($content) && ! is_ipv6($content)))
-	{
-		$message = "PTR record must be a valid ip address";
 	}
 	elsif ($type eq 'SPF' && $content !~ m/(\w)+/)
 	{
