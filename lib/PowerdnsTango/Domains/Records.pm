@@ -37,7 +37,7 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub {
     if (request->method() eq "POST" && $search ne '0')
     {
         $sth = database->prepare(
-            'select count(id) as count from records where domain_id = ? and type != ? and (name like ? or content like ? or ttl like ?)'
+            'select count(id) as count from records where domain_id = ? and type != ? and (name like ? or content like ? or ttl::text like ?)'
         );
         $sth->execute($domain_id, 'SOA', "%$search%", "%$search%", "%$search%");
         $count = $sth->fetchrow_hashref;
@@ -79,7 +79,7 @@ any ['get', 'post'] => '/domains/edit/records/id/:id' => sub {
     if (request->method() eq "POST" && $search ne '0')
     {
         $sth = database->prepare(
-            'select * from records where domain_id = ? and type != ? and (name like ? or content like ? or ttl like ?) limit ? offset ?'
+            'select * from records where domain_id = ? and type != ? and (name like ? or content like ? or ttl::text like ?) limit ? offset ?'
         );
         $sth->execute($domain_id, 'SOA', "%$search%", "%$search%", "%$search%",
                       $page->entries_per_page, $display);
